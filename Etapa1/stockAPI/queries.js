@@ -14,7 +14,7 @@ var db = pgp({
     password: 'topsecret'      
 }); // BUG -> user and psswd shouldnt be visible
 
-// configurable query functions
+// configurable query functions ---------------------------------------------------------------------
 
 function getAll(res, next,tableName){
   db.any(`select * from ${tableName}`)
@@ -62,7 +62,7 @@ function remove(res, next, tableName, id) {
    });
 }
 
-// products query functions
+// products query functions ---------------------------------------------------------------------
 
 function getAllProducts(req, res, next) {
   return getAll(res, next, 'products');
@@ -72,12 +72,14 @@ function getSingleProduct(req, res, next) {
   var id = parseInt(req.params.id);
   return getSingle(res, next, 'products', id);
 }
-  
+
+// via terminal: curl -X DELETE http://127.0.0.1:3000/api/product/6
 function removeProduct(req, res, next) {
   var id = parseInt(req.params.id);
   return remove(res, next, 'products', id);
 }
 
+// via terminal: curl --data "name=tst&costPrice=5&salePrice=10&productType=7" http://127.0.0.1:3000/api/products
 function createProduct(req, res, next) {
   req.body.salePrice = parseInt(req.body.salePrice);
   req.body.costPrice = parseInt(req.body.costPrice);
@@ -97,6 +99,7 @@ function createProduct(req, res, next) {
     });
 }
 
+// via terminal: curl -X PUT --data "name=tstV2&costPrice=5&salePrice=10&productType=7" http://127.0.0.1:3000/api/products/7
 function updateProduct(req, res, next) {
   db.none('update products set name=$1, costPrice=$2, salePrice=$3, productType=$4 where id=$5',
     [req.body.name, parseInt(req.body.costPrice), parseInt(req.body.salePrice),
@@ -113,6 +116,55 @@ function updateProduct(req, res, next) {
     });
 }
   
+// productTypes query functions ---------------------------------------------------------------------
+
+function getAllProductTypes(req, res, next) {
+  return getAll(res, next, 'productTypes');
+}
+  
+function getSingleProductType(req, res, next) {
+  var id = parseInt(req.params.id);
+  return getSingle(res, next, 'productTypes', id);
+}
+
+// via terminal: curl -X DELETE http://127.0.0.1:3000/api/productTypes/6
+function removeProductType(req, res, next) {
+  var id = parseInt(req.params.id);
+  return remove(res, next, 'productTypes', id);
+}
+
+// via terminal: curl --data "initials=tst&description=test" http://127.0.0.1:3000/api/productType
+function createProductType(req, res, next) {
+  db.none('insert into productTypes(initials, description)' +
+      'values(${initials}, ${description})',
+    req.body)
+    .then(function () {
+      res.status(200)
+        .json({
+          status: 'success',
+          message: 'Inserted one ProductType'
+        });
+    })
+    .catch(function (err) {
+      return next(err);
+    });
+}
+
+// via terminal: curl -X PUT --data "initials=tstV2&description=test version 2" http://127.0.0.1:3000/api/productTypes/7
+function updateProductType(req, res, next) {
+  db.none('update productTypes set initials=$1, description=$2 where id=$3',
+    [req.body.initials, req.body.description, parseInt(req.params.id)])
+    .then(function () {
+      res.status(200)
+        .json({
+          status: 'success',
+          message: 'Updated ProductType'
+        });
+    })
+    .catch(function (err) {
+      return next(err);
+    });
+}
 
 module.exports = {
   getAllProducts: getAllProducts,
@@ -120,6 +172,12 @@ module.exports = {
   createProduct: createProduct,
   updateProduct: updateProduct,
   removeProduct: removeProduct,
+
+  getAllProductTypes: getAllProductTypes,
+  getSingleProductType: getSingleProductType,
+  createProductType: createProductType,
+  updateProductType: updateProductType,
+  removeProductType: removeProductType,
 };
 
 
