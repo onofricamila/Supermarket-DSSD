@@ -7,12 +7,12 @@ var options = {
 
 var pgp = require('pg-promise')(options);
 var db = pgp({
-  host: 'localhost',
-  port: 5432,
-  database: 'staff',
-  user: 'secret',
-  password: 'secret'
-}); // BUG -> user and psswd shouldnt be visible
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  database: process.env.DB_DATABASE,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD
+});
 
 function getAll(res, next, tableName) {
   db.any(`select * from ${tableName}`)
@@ -103,7 +103,7 @@ function updateEmployee(req, res, next) {
       res.status(200)
         .json({
           status: 'success',
-          message: 'Updated employee'
+          message: 'Updated employees'
         });
     })
     .catch(function (err) {
@@ -112,6 +112,51 @@ function updateEmployee(req, res, next) {
 }
 
 // EmployeeTypes
+
+function getAllEmployeeTypes(req, res, next) {
+  return getAll(res, next, 'employeeTypes');
+}
+  
+function getSingleEmployeeType(req, res, next) {
+  var id = parseInt(req.params.id);
+  return getSingle(res, next, 'employeeTypes', id);
+}
+
+function removeEmployeeType(req, res, next) {
+  var id = parseInt(req.params.id);
+  return remove(res, next, 'employeeTypes', id);
+}
+
+function createEmployeeType(req, res, next) {
+  db.none('insert into employeeTypes(initials, description)' +
+      'values(${initials}, ${description})',
+    req.body)
+    .then(function () {
+      res.status(200)
+        .json({
+          status: 'success',
+          message: 'Inserted one EmployeeType'
+        });
+    })
+    .catch(function (err) {
+      return next(err);
+    });
+}
+
+function updateEmployeeType(req, res, next) {
+  db.none('update employeeTypes set initials=$1, description=$2 where id=$3',
+    [req.body.initials, req.body.description, parseInt(req.params.id)])
+    .then(function () {
+      res.status(200)
+        .json({
+          status: 'success',
+          message: 'Updated EmployeeTypes'
+        });
+    })
+    .catch(function (err) {
+      return next(err);
+    });
+}
 
 // -------------- TODO --------------
 
@@ -147,5 +192,11 @@ module.exports = {
   getSingleEmployee: getSingleEmployee,
   createEmployee: createEmployee,
   updateEmployee: updateEmployee,
-  removeEmployee: removeEmployee
+  removeEmployee: removeEmployee,
+
+  getAllEmployeeTypes: getAllEmployeeTypes,
+  getSingleEmployeeType: getSingleEmployeeType,
+  createEmployeeType: createEmployeeType,
+  updateEmployeeType: updateEmployeeType,
+  removeEmployeeType: removeEmployeeType
 };
