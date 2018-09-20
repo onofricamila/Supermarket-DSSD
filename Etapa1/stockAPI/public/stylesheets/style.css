@@ -1,8 +1,19 @@
 body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  text-align: center;
 }
 
 a {
   color: #00B7FF;
+}
+
+img {
+  border-radius: 50%;
+  height: 120px;
+  width: auto;
+}
+
+pre {
+  text-align: left;
 }
