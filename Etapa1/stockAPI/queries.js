@@ -9,7 +9,7 @@ var pgp = require('pg-promise')(options);
 var db = pgp({
     host: 'localhost',
     port: 5432,
-    database: 'supermarket',
+    database: 'stock',
     user: 'grupo1',
     password: 'topsecret'
 });
@@ -23,7 +23,7 @@ function getAllProducts(req, res, next) {
           .json({
             status: 'success',
             data: data,
-            messsaleprice: 'Retrieved ALL products'
+            messsalePrice: 'Retrieved ALL products'
           });
       })
       .catch(function (err) {
@@ -39,7 +39,7 @@ function getAllProducts(req, res, next) {
           .json({
             status: 'success',
             data: data,
-            messsaleprice: 'Retrieved ONE Product'
+            messsalePrice: 'Retrieved ONE Product'
           });
       })
       .catch(function (err) {
@@ -48,17 +48,17 @@ function getAllProducts(req, res, next) {
   }
 
   function createProduct(req, res, next) {
-    req.body.saleprice = parseInt(req.body.saleprice);
-    req.body.costprice = parseInt(req.body.costprice);
-    req.body.producttype = parseInt(req.body.producttype);
-    db.none('insert into products(name, costprice, saleprice, producttype)' +
-        'values(${name}, ${costprice}, ${saleprice}, ${producttype})',
+    req.body.salePrice = parseInt(req.body.salePrice);
+    req.body.costPrice = parseInt(req.body.costPrice);
+    req.body.productType = parseInt(req.body.productType);
+    db.none('insert into products(name, costPrice, salePrice, productType)' +
+        'values(${name}, ${costPrice}, ${salePrice}, ${productType})',
       req.body)
       .then(function () {
         res.status(200)
           .json({
             status: 'success',
-            messsaleprice: 'Inserted one Product'
+            messsalePrice: 'Inserted one Product'
           });
       })
       .catch(function (err) {
@@ -67,14 +67,14 @@ function getAllProducts(req, res, next) {
   }
   
   function updateProduct(req, res, next) {
-    db.none('update products set name=$1, costprice=$2, saleprice=$3, producttype=$4 where id=$5',
-      [req.body.name, parseInt(req.body.costprice), parseInt(req.body.saleprice),
-        parseInt(req.body.producttype), parseInt(req.params.id)])
+    db.none('update products set name=$1, costPrice=$2, salePrice=$3, productType=$4 where id=$5',
+      [req.body.name, parseInt(req.body.costPrice), parseInt(req.body.salePrice),
+        parseInt(req.body.productType), parseInt(req.params.id)])
       .then(function () {
         res.status(200)
           .json({
             status: 'success',
-            messsaleprice: 'Updated Product'
+            messsalePrice: 'Updated Product'
           });
       })
       .catch(function (err) {
@@ -90,7 +90,7 @@ function getAllProducts(req, res, next) {
         res.status(200)
           .json({
             status: 'success',
-            messsaleprice: `Removed ${result.rowCount} Product`
+            messsalePrice: `Removed ${result.rowCount} Product`
           });
         /* jshint ignore:end */
       })
