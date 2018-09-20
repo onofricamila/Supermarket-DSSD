@@ -1,6 +1,7 @@
 extends layout
 
 block content
+  img.className#IdName(src="/images/error1.png" alt="Error Image")
   h1= message
   h2= error.status
   pre #{error.stack}
