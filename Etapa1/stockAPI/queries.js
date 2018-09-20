@@ -9,95 +9,109 @@ var pgp = require('pg-promise')(options);
 var db = pgp({
     host: 'localhost',
     port: 5432,
-    database: 'supermarket',
-    user: 'grupo1',
-    password: 'topsecret'
-});
+    database: 'stock',
+    user: 'grupo1',       
+    password: 'topsecret'      
+}); // BUG -> user and psswd shouldnt be visible
 
-// add query functions
+// configurable query functions
+
+function getAll(res, next,tableName){
+  db.any(`select * from ${tableName}`)
+  .then(function (data) {
+    res.status(200)
+      .json({
+        status: 'success',
+        data: data,
+        message: `Retrieved ALL ${tableName}`
+      });
+  })
+  .catch(function (err) {
+    return next(err);
+  });
+}
+
+function getSingle(res, next, tableName, id) {
+  db.one(`select * from ${tableName} where id = $1`, id)
+    .then(function (data) {
+      res.status(200)
+        .json({
+          status: 'success',
+          data: data,
+          message: `Retrieved ONE element from ${tableName}`
+        });
+    })
+    .catch(function (err) {
+      return next(err);
+    });
+}
+
+function remove(res, next, tableName, id) {
+  db.result(`delete from ${tableName} where id = $1`, id)
+   .then(function (result) {
+     /* jshint ignore:start */
+     res.status(200)
+       .json({
+         status: 'success',
+         message: `Removed ${result.rowCount} element from ${tableName}`
+       });
+     /* jshint ignore:end */
+   })
+   .catch(function (err) {
+     return next(err);
+   });
+}
+
+// products query functions
 
 function getAllProducts(req, res, next) {
-    db.any('select * from products')
-      .then(function (data) {
-        res.status(200)
-          .json({
-            status: 'success',
-            data: data,
-            messsaleprice: 'Retrieved ALL products'
-          });
-      })
-      .catch(function (err) {
-        return next(err);
-      });
-  }
+  return getAll(res, next, 'products');
+}
   
-  function getSingleProduct(req, res, next) {
-    var pupID = parseInt(req.params.id);
-    db.one('select * from products where id = $1', pupID)
-      .then(function (data) {
-        res.status(200)
-          .json({
-            status: 'success',
-            data: data,
-            messsaleprice: 'Retrieved ONE Product'
-          });
-      })
-      .catch(function (err) {
-        return next(err);
-      });
-  }
+function getSingleProduct(req, res, next) {
+  var id = parseInt(req.params.id);
+  return getSingle(res, next, 'products', id);
+}
+  
+function removeProduct(req, res, next) {
+  var id = parseInt(req.params.id);
+  return remove(res, next, 'products', id);
+}
 
-  function createProduct(req, res, next) {
-    req.body.saleprice = parseInt(req.body.saleprice);
-    req.body.costprice = parseInt(req.body.costprice);
-    req.body.producttype = parseInt(req.body.producttype);
-    db.none('insert into products(name, costprice, saleprice, producttype)' +
-        'values(${name}, ${costprice}, ${saleprice}, ${producttype})',
-      req.body)
-      .then(function () {
-        res.status(200)
-          .json({
-            status: 'success',
-            messsaleprice: 'Inserted one Product'
-          });
-      })
-      .catch(function (err) {
-        return next(err);
-      });
-  }
-  
-  function updateProduct(req, res, next) {
-    db.none('update products set name=$1, costprice=$2, saleprice=$3, producttype=$4 where id=$5',
-      [req.body.name, parseInt(req.body.costprice), parseInt(req.body.saleprice),
-        parseInt(req.body.producttype), parseInt(req.params.id)])
-      .then(function () {
-        res.status(200)
-          .json({
-            status: 'success',
-            messsaleprice: 'Updated Product'
-          });
-      })
-      .catch(function (err) {
-        return next(err);
-      });
-  }
-  
-  function removeProduct(req, res, next) {
-    var pupID = parseInt(req.params.id);
-    db.result('delete from products where id = $1', pupID)
-      .then(function (result) {
-        /* jshint ignore:start */
-        res.status(200)
-          .json({
-            status: 'success',
-            messsaleprice: `Removed ${result.rowCount} Product`
-          });
-        /* jshint ignore:end */
-      })
-      .catch(function (err) {
-        return next(err);
-      });
-  }
+function createProduct(req, res, next) {
+  req.body.salePrice = parseInt(req.body.salePrice);
+  req.body.costPrice = parseInt(req.body.costPrice);
+  req.body.productType = parseInt(req.body.productType);
+  db.none('insert into products(name, costPrice, salePrice, productType)' +
+      'values(${name}, ${costPrice}, ${salePrice}, ${productType})',
+    req.body)
+    .then(function () {
+      res.status(200)
+        .json({
+          status: 'success',
+          message: 'Inserted one Product'
+        });
+    })
+    .catch(function (err) {
+      return next(err);
+    });
+}
+
+function updateProduct(req, res, next) {
+  db.none('update products set name=$1, costPrice=$2, salePrice=$3, productType=$4 where id=$5',
+    [req.body.name, parseInt(req.body.costPrice), parseInt(req.body.salePrice),
+      parseInt(req.body.productType), parseInt(req.params.id)])
+    .then(function () {
+      res.status(200)
+        .json({
+          status: 'success',
+          message: 'Updated Product'
+        });
+    })
+    .catch(function (err) {
+      return next(err);
+    });
+}
   
 
 module.exports = {

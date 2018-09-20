@@ -4,10 +4,10 @@ var db = require('../queries');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+  res.render('index', { title: 'Stock API' });
 });
 
-/* endpoints products */
+/* products endpoints */
 router.get('/api/products', db.getAllProducts);
 router.get('/api/products/:id', db.getSingleProduct);
 router.post('/api/products', db.createProduct);
