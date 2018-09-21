@@ -24,7 +24,12 @@ function getAllProducts(req, res, next) {
   var productTypedValue = req.query.productType ? `(SELECT id FROM productTypes WHERE description = '${req.query.productType}')` : 1;
   var productTypeName = req.query.productType ? 'productType' : 1;
   var sortFieldName = req.query.sort ? req.query.sort.substring(1) : 'id';
-  var sortMode = req.query.sort.charAt(0) == 'd' ? 'DESC' : 'ASC';
+  if (req.query.sort != null) {
+    var sortMode = req.query.sort.charAt(0) == 'd' ? 'DESC' : 'ASC';
+  }
+  else{
+    var sortMode = 'ASC';
+  }
   db.any(`SELECT * FROM products WHERE ${productTypeName}=${productTypedValue} ORDER BY ${sortFieldName} ${sortMode}`)
   .then(function (data) {
     res.status(200)
