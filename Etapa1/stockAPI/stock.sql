@@ -43,14 +43,15 @@ INSERT INTO productTypes (initials, description)
          ('cnd', 'condimentos'),
          ('jug', 'jugos'),
          ('snk', 'snacks'),
-         ('lal', 'lala');
+         ('elc', 'electro');
 
 INSERT INTO products (name, costPrice, salePrice, productType)
   VALUES ('toddy', 5, 10, 1),
          ('oreo', 5, 10, 1),
          ('opera', 5, 10, 1),
-         ('cheetos', 5, 10, 5),
-         ('doritos', 5, 10, 5),
-         ('lalala', 5, 10, 5);
+         ('cheetos', 5, 15, 5),
+         ('doritos', 5, 15, 5),
+         ('tv', 5, 20, 6),
+         ('monitor', 5, 20, 6);
 
 
