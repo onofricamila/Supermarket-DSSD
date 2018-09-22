@@ -2,6 +2,7 @@
 
 ## Tener en cuenta:
 - Se debe tener instalado Node.js, y psql (Usamos [PostgreSQL](https://www.tutorialspoint.com/postgresql/))
+- Se debe agregar un archivo .env que setee la info de la db
 
 ## Como usar la api:
 
