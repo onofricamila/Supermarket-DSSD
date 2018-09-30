@@ -41,13 +41,17 @@ Simpler url: http://localhost:3000/api/products
 Testing JSON: http://localhost:3000/api/products?json={%22name%22:%22John%22,%22age%22:32}
 
 Pretending to sort: http://localhost:3000/api/products?sort={%22first%22:{%22field%22:%22name%22,%22mode%22:%22ASC%22}}
-    or: http://localhost:3000/api/products?sort={%22first%22:{%22field%22:%22saleprice%22,%22mode%22:%22ASC%22},%22second%22:{%22field%22:%22name%22,%22mode%22:%22ASC%22}} 
+    or sorting by multiple fields: http://localhost:3000/api/products?sort={%22first%22:{%22field%22:%22saleprice%22,%22mode%22:%22ASC%22},%22second%22:{%22field%22:%22name%22,%22mode%22:%22ASC%22}} 
+
+Pretending to filter: http://localhost:3000/api/products?filter={%22first%22:{%22field%22:%22saleprice%22,%22operator%22:%22=%22,%22value%22:15}}
+    or filtering by multiple fields: http://localhost:3000/api/products?filter={%22first%22:{%22field%22:%22costprice%22,%22operator%22:%22%3C%22,%22value%22:5},%22second%22:{%22field%22:%22name%22,%22operator%22:%22LIKE%22,%22value%22:%22o%25%22}}
 
 
 
+Visit the following link when trying to encode url --> http://www.december.com/html/spec/esccodes.html
 */
 function getAllProductsV2(req, res, next) {
-  // debug
+  // testing json
   if(req.query.json){
     console.log(req.query.json);
     var param = JSON.parse(req.query.json);
@@ -58,12 +62,29 @@ function getAllProductsV2(req, res, next) {
   }
 
 
-  // let's work 
   var sql = 'SELECT * FROM products';
   var sort = req.query.sort;
+  var filter = req.query.filter;
+  var pagination = req.query.pagination;
+  
+   // let's filter
+   if (filter){ 
+    console.log('hay param filter');
+    sql += ` WHERE`;
+    filter = JSON.parse(filter);
+    for (var f in filter) {
+      console.log(f, filter[f]);
+      sql += ` ${filter[f]["field"]} ${filter[f].operator} '${filter[f].value}' AND`;
+    }
+    sql = sql.substring(0, sql.length -3);
+    console.log(sql);
+  }
+
+
+  // let's sort
   if (sort){ 
     console.log('hay param sort');
-    sql += ` ORDER BY `;
+    sql += ` ORDER BY`;
     sort = JSON.parse(sort);
     for (var s in sort) {
       console.log(s, sort[s]);
@@ -72,6 +93,8 @@ function getAllProductsV2(req, res, next) {
     sql = sql.substring(0, sql.length -1);
     console.log(sql);
   }
+
+  // query the db
   db.any(sql)
     .then(function (data) {
       res.status(200)
