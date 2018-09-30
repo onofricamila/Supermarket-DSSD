@@ -31,6 +31,9 @@ Pretending to filter: http://localhost:3000/api/products?filter={%22first%22:{%2
 
 Mixing sorting and filtering: http://localhost:3000/api/products?sort={%22first%22:{%22field%22:%22name%22,%22mode%22:%22DESC%22}}&filter={%22first%22:{%22field%22:%22saleprice%22,%22operator%22:%22=%22,%22value%22:15}}
 
+Pretending to pagiante: http://localhost:3000/api/products?pagination={%22limit%22:3}
+    or sending offset: http://localhost:3000/api/products?pagination={%22offset%22:3,%22limit%22:3}
+
 Visit the following link when trying to encode url --> http://www.december.com/html/spec/esccodes.html
 */
 
@@ -75,6 +78,15 @@ function getAllProductsV2(req, res, next) {
       sql += ` ${sort[s]["field"]}  ${sort[s].mode},`;
     }
     sql = sql.substring(0, sql.length -1);
+    console.log(sql);
+  }
+
+  // let's do some pagination
+  if (pagination){ 
+    console.log('hay param pagination');
+    pagination = JSON.parse(pagination);
+    pagination.offset = pagination.offset || 0;
+    sql += ` LIMIT ${pagination.limit} OFFSET ${pagination.offset}`;
     console.log(sql);
   }
 
