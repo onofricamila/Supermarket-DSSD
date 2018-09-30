@@ -66,44 +66,36 @@ function getSingleProduct(req, res, next) {
 
 
 
-// try: http://localhost:3000/api/products/1/margin
-function getSingleProductMargin(req, res, next) {
+
+// try: http://localhost:3000/api/products/1/marginInfo
+function getSingleProductMarginInfo(req, res, next) {
   var id = parseInt(req.params.id);
-  db.one(`select name, (salePrice - costprice) as margin from products where id = $1`, id)
+  var finalData = {}
+  var salePriceTenPercentSql= `select (salePrice * 0.1) as TenPercentValue from products where id = $1`;
+  var marginSql = `select (salePrice - costprice) as margin from products where id = $1`;
+  var marginGt10PercentSql = `SELECT CAST(COUNT(1) AS BIT) as boolean
+                              FROM products
+                              WHERE id = $1 
+                                AND (${marginSql}) > (${salePriceTenPercentSql})`;
+  db.one(marginSql, id)
     .then(function (data) {
-      res.status(200)
-        .json({
-          status: 'success',
-          data: data.margin,
-          message: `${data.name} margin`
-        });
+        finalData.margin = data.margin;
+        db.one(marginGt10PercentSql, id)
+          .then(function (data) {
+            finalData.marginGt10PercentValue = data.boolean;
+            res.status(200)
+              .json({
+                status: 'success',
+                data: finalData,
+                message: `Retrieving product margin and [0 | 1] representing the fact of product margin surpassing product sale price 10 percent or not (boolean)`
+              });
+        })
     })
     .catch(function (err) {
       return next(err);
     });
 }
 
-
-
-// try: http://localhost:3000/api/products/1/marginGt10PercentValue
-function getSingleProductMarginGtTenPercentValue(req, res, next) {
-  var id = parseInt(req.params.id);
-  var sql = `SELECT CAST(COUNT(1) AS BIT) as boolean
-                FROM products
-                WHERE id = $1 AND (select (salePrice - costprice) as margin from products where id = $1) > (select (salePrice * 0.1) as TenPercentValue from products where id = $1)`;
-  db.one(sql, id)
-    .then(function (data) {
-      res.status(200)
-        .json({
-          status: 'success',
-          data: data.boolean,
-          message: `Rtrieved [0 | 1] representing the fact of a product margin surpassing 10 % of the poduct sale price or not (boolean)`
-        });
-    })
-    .catch(function (err) {
-      return next(err);
-    });
-}
 
 
 
@@ -132,9 +124,8 @@ function getSingleProductIsElectroValue(req, res, next) {
 module.exports = {
   getAllProducts: getAllProducts,
   getSingleProduct: getSingleProduct,
-  getSingleProductMargin: getSingleProductMargin,
+  getSingleProductMarginInfo: getSingleProductMarginInfo,
   getSingleProductIsElectroValue: getSingleProductIsElectroValue,
-  getSingleProductMarginGtTenPercentValue: getSingleProductMarginGtTenPercentValue
 };
 
 
