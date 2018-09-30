@@ -88,7 +88,7 @@ function getSingleProductMargin(req, res, next) {
 // try: http://localhost:3000/api/products/1/isElectroValue ||| BUG -> no prod w that id returns boolean 0
 function getSingleProductIsElectroValue(req, res, next) {
   var id = parseInt(req.params.id);
-  var sql = `SELECT CAST(COUNT(1) AS BIT) AS isElectro 
+  var sql = `SELECT CAST(COUNT(1) AS BIT) as iselectro
              FROM products 
              WHERE id = $1 AND productType = (SELECT id FROM productTypes WHERE description = 'electro')`;
   db.one(sql, id)
@@ -96,7 +96,7 @@ function getSingleProductIsElectroValue(req, res, next) {
       res.status(200)
         .json({
           status: 'success',
-          data: data.isElectro,
+          data: data.iselectro,
           message: `Rtrieved [0 | 1] representing the fact of a product being electric or not (boolean)`
         });
     })
