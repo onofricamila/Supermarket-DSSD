@@ -46,7 +46,7 @@ INSERT INTO productTypes (initials, description)
          ('elc', 'electro');
 
 INSERT INTO products (name, costPrice, salePrice, productType)
-  VALUES ('toddy', 2, 10, 1),
+  VALUES ('toddy', 10, 10, 1),
          ('oreo', 5, 10, 1),
          ('opera', 3, 10, 1),
          ('cheetos', 5, 15, 5),

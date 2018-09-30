@@ -21,8 +21,6 @@ var db = pgp({
 /* 
 Simpler url: http://localhost:3000/api/products
 
-Testing JSON: http://localhost:3000/api/products?json={%22name%22:%22John%22,%22age%22:32}
-
 Pretending to sort: http://localhost:3000/api/products?sort={%22first%22:{%22field%22:%22name%22,%22mode%22:%22ASC%22}}
     or sorting by multiple fields: http://localhost:3000/api/products?sort={%22first%22:{%22field%22:%22saleprice%22,%22mode%22:%22ASC%22},%22second%22:{%22field%22:%22name%22,%22mode%22:%22ASC%22}} 
 
@@ -31,23 +29,13 @@ Pretending to filter: http://localhost:3000/api/products?filter={%22first%22:{%2
 
 Mixing sorting and filtering: http://localhost:3000/api/products?sort={%22first%22:{%22field%22:%22name%22,%22mode%22:%22DESC%22}}&filter={%22first%22:{%22field%22:%22saleprice%22,%22operator%22:%22=%22,%22value%22:15}}
 
-Pretending to pagiante: http://localhost:3000/api/products?pagination={%22limit%22:3}
-    or sending offset: http://localhost:3000/api/products?pagination={%22offset%22:3,%22limit%22:3}
+Pretending to pagiante sending only limit: http://localhost:3000/api/products?pagination={%22limit%22:3}
+    or sending also offset: http://localhost:3000/api/products?pagination={%22offset%22:3,%22limit%22:3}
 
 Visit the following link when trying to encode url --> http://www.december.com/html/spec/esccodes.html
 */
 
 function getAllProductsV2(req, res, next) {
-  // testing json
-  if(req.query.json){
-    console.log(req.query.json);
-    var param = JSON.parse(req.query.json);
-    console.log(param);
-    for (var key in param) {
-      console.log(key, param[key]);
-    }
-  }
-
 
   var sql = 'SELECT * FROM products';
   var sort = req.query.sort;
@@ -56,11 +44,9 @@ function getAllProductsV2(req, res, next) {
   
    // let's filter
    if (filter){ 
-    console.log('hay param filter');
     sql += ` WHERE`;
     filter = JSON.parse(filter);
     for (var f in filter) {
-      console.log(f, filter[f]);
       sql += ` ${filter[f]["field"]} ${filter[f].operator} '${filter[f].value}' AND`;
     }
     sql = sql.substring(0, sql.length -3);
@@ -70,11 +56,9 @@ function getAllProductsV2(req, res, next) {
 
   // let's sort
   if (sort){ 
-    console.log('hay param sort');
     sql += ` ORDER BY`;
     sort = JSON.parse(sort);
     for (var s in sort) {
-      console.log(s, sort[s]);
       sql += ` ${sort[s]["field"]}  ${sort[s].mode},`;
     }
     sql = sql.substring(0, sql.length -1);
@@ -83,11 +67,15 @@ function getAllProductsV2(req, res, next) {
 
   // let's do some pagination
   if (pagination){ 
-    console.log('hay param pagination');
     pagination = JSON.parse(pagination);
     pagination.offset = pagination.offset || 0;
     sql += ` LIMIT ${pagination.limit} OFFSET ${pagination.offset}`;
     console.log(sql);
+    var paginationData = {
+          next: `/api/products?pagination={%22offset%22:${pagination.offset + pagination.limit},%22limit%22:${pagination.limit}}`, // BUG -> we need to find a way to determine when there are no more pages
+          self: `/api/products?pagination={%22offset%22:${pagination.offset},%22limit%22:${pagination.limit}}`,
+          prev: pagination.offset != 0 ? `/api/products?pagination={%22offset%22:${pagination.offset - pagination.limit},%22limit%22:${pagination.limit}}` : null,
+    }
   }
 
   // query the db
@@ -97,7 +85,8 @@ function getAllProductsV2(req, res, next) {
         .json({
           status: 'success',
           data: data,
-          messsaleprice: 'Retrieved ALL products'
+          messsaleprice: 'Retrieved ALL products',
+          paginationLinks: paginationData || null
         });
     })
     .catch(function (err) {
