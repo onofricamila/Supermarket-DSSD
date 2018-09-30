@@ -36,7 +36,7 @@ Elgimos trabajar con Node.js (específiccamente usando el framework Express.js),
 
 ## Endpoints
 
-### stockAPI
+### :rocket: stockAPI
 
 **GET /api/products**
 Lista todos los productos, cada uno con sus atributos. Se pueden pasar parametros json por la url para obtener la funcionalidad de ordenamiento, filtrado y paginación. Estos son:
@@ -73,4 +73,4 @@ Devuelve un booleano que indica si el producto que se le indica por el parámetr
 
 
 
-### staffAPI
+### :rocket: staffAPI
