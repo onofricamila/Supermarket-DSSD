@@ -16,11 +16,83 @@ var db = pgp({
 
 // Query functions ---------------------------------------------------------------------------------------
 
+
+// try w this url: http://localhost:3000/api/products
+function getAllProductsV0(req, res, next) {
+  db.any('select * from products')
+    .then(function (data) {
+      res.status(200)
+        .json({
+          status: 'success',
+          data: data,
+          messsaleprice: 'Retrieved ALL products'
+        });
+    })
+    .catch(function (err) {
+      return next(err);
+    });
+}
+
+
+
+/* 
+Simpler url: http://localhost:3000/api/products
+
+Testing JSON: http://localhost:3000/api/products?json={%22name%22:%22John%22,%22age%22:32}
+
+Pretending to sort: http://localhost:3000/api/products?sort={%22first%22:{%22field%22:%22name%22,%22mode%22:%22ASC%22}}
+    or: http://localhost:3000/api/products?sort={%22first%22:{%22field%22:%22saleprice%22,%22mode%22:%22ASC%22},%22second%22:{%22field%22:%22name%22,%22mode%22:%22ASC%22}} 
+
+
+
+*/
+function getAllProductsV2(req, res, next) {
+  // debug
+  if(req.query.json){
+    console.log(req.query.json);
+    var param = JSON.parse(req.query.json);
+    console.log(param);
+    for (var key in param) {
+      console.log(key, param[key]);
+    }
+  }
+
+
+  // let's work 
+  var sql = 'SELECT * FROM products';
+  var sort = req.query.sort;
+  if (sort){ 
+    console.log('hay param sort');
+    sql += ` ORDER BY `;
+    sort = JSON.parse(sort);
+    for (var s in sort) {
+      console.log(s, sort[s]);
+      sql += ` ${sort[s]["field"]}  ${sort[s].mode},`;
+    }
+    sql = sql.substring(0, sql.length -1);
+    console.log(sql);
+  }
+  db.any(sql)
+    .then(function (data) {
+      res.status(200)
+        .json({
+          status: 'success',
+          data: data,
+          messsaleprice: 'Retrieved ALL products'
+        });
+    })
+    .catch(function (err) {
+      return next(err);
+    });
+}
+
+
+
 /* try w this url: http://localhost:3000/api/products?productType=galletitas
 or: http://localhost:3000/api/products?sort=asaleprice
 or: http://localhost:3000/api/products?sort=dsaleprice&productType=galletitas
 or the generic one: http://localhost:3000/api/products */
-function getAllProducts(req, res, next) {
+function getAllProductsV1(req, res, next) {
   var productTypedValue = req.query.productType ? `(SELECT id FROM productTypes WHERE description = '${req.query.productType}')` : 1;
   var productTypeName = req.query.productType ? 'productType' : 1;
   var sortFieldName = req.query.sort ? req.query.sort.substring(1) : 'id';
@@ -122,7 +194,9 @@ function getSingleProductIsElectroValue(req, res, next) {
 
 
 module.exports = {
-  getAllProducts: getAllProducts,
+  getAllProductsV0: getAllProductsV0,
+  getAllProductsV1: getAllProductsV1,
+  getAllProductsV2: getAllProductsV2,
   getSingleProduct: getSingleProduct,
   getSingleProductMarginInfo: getSingleProductMarginInfo,
   getSingleProductIsElectroValue: getSingleProductIsElectroValue,
