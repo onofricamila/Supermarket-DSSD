@@ -11,6 +11,7 @@ router.get('/', function(req, res, next) {
 router.get('/api/products', db.getAllProducts);
 router.get('/api/products/:id', db.getSingleProduct);
 router.get('/api/products/:id/margin', db.getSingleProductMargin);
+router.get('/api/products/:id/marginGtTenPercentValue', db.getSingleProductMarginGtTenPercentValue);
 router.get('/api/products/:id/isElectroValue', db.getSingleProductIsElectroValue);
 
 

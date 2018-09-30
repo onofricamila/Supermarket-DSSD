@@ -69,7 +69,7 @@ function getSingleProduct(req, res, next) {
 // try: http://localhost:3000/api/products/1/margin
 function getSingleProductMargin(req, res, next) {
   var id = parseInt(req.params.id);
-  db.one(`select *, (salePrice - costprice) as margin from products where id = $1`, id)
+  db.one(`select name, (salePrice - costprice) as margin from products where id = $1`, id)
     .then(function (data) {
       res.status(200)
         .json({
@@ -85,10 +85,32 @@ function getSingleProductMargin(req, res, next) {
 
 
 
-// try: http://localhost:3000/api/products/1/isElectroValue ||| BUG -> no prod w that id returns boolean 0
+// try: http://localhost:3000/api/products/1/marginGt10PercentValue
+function getSingleProductMarginGtTenPercentValue(req, res, next) {
+  var id = parseInt(req.params.id);
+  var sql = `SELECT CAST(COUNT(1) AS BIT) as boolean
+                FROM products
+                WHERE id = $1 AND (select (salePrice - costprice) as margin from products where id = $1) > (select (salePrice * 0.1) as TenPercentValue from products where id = $1)`;
+  db.one(sql, id)
+    .then(function (data) {
+      res.status(200)
+        .json({
+          status: 'success',
+          data: data.boolean,
+          message: `Rtrieved [0 | 1] representing the fact of a product margin surpassing 10 % of the poduct sale price or not (boolean)`
+        });
+    })
+    .catch(function (err) {
+      return next(err);
+    });
+}
+
+
+
+// try: http://localhost:3000/api/products/1/isElectroValue 
 function getSingleProductIsElectroValue(req, res, next) {
   var id = parseInt(req.params.id);
-  var sql = `SELECT CAST(COUNT(1) AS BIT) as iselectro
+  var sql = `SELECT CAST(COUNT(1) AS BIT) as boolean
              FROM products 
              WHERE id = $1 AND productType = (SELECT id FROM productTypes WHERE description = 'electro')`;
   db.one(sql, id)
@@ -96,7 +118,7 @@ function getSingleProductIsElectroValue(req, res, next) {
       res.status(200)
         .json({
           status: 'success',
-          data: data.iselectro,
+          data: data.boolean,
           message: `Rtrieved [0 | 1] representing the fact of a product being electric or not (boolean)`
         });
     })
@@ -112,7 +134,7 @@ module.exports = {
   getSingleProduct: getSingleProduct,
   getSingleProductMargin: getSingleProductMargin,
   getSingleProductIsElectroValue: getSingleProductIsElectroValue,
-
+  getSingleProductMarginGtTenPercentValue: getSingleProductMarginGtTenPercentValue
 };
 
 
