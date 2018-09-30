@@ -17,23 +17,6 @@ var db = pgp({
 // Query functions ---------------------------------------------------------------------------------------
 
 
-// try w this url: http://localhost:3000/api/products
-function getAllProductsV0(req, res, next) {
-  db.any('select * from products')
-    .then(function (data) {
-      res.status(200)
-        .json({
-          status: 'success',
-          data: data,
-          messsaleprice: 'Retrieved ALL products'
-        });
-    })
-    .catch(function (err) {
-      return next(err);
-    });
-}
-
-
 
 /* 
 Simpler url: http://localhost:3000/api/products
@@ -46,10 +29,11 @@ Pretending to sort: http://localhost:3000/api/products?sort={%22first%22:{%22fie
 Pretending to filter: http://localhost:3000/api/products?filter={%22first%22:{%22field%22:%22saleprice%22,%22operator%22:%22=%22,%22value%22:15}}
     or filtering by multiple fields: http://localhost:3000/api/products?filter={%22first%22:{%22field%22:%22costprice%22,%22operator%22:%22%3C%22,%22value%22:5},%22second%22:{%22field%22:%22name%22,%22operator%22:%22LIKE%22,%22value%22:%22o%25%22}}
 
-
+Mixing sorting and filtering: http://localhost:3000/api/products?sort={%22first%22:{%22field%22:%22name%22,%22mode%22:%22DESC%22}}&filter={%22first%22:{%22field%22:%22saleprice%22,%22operator%22:%22=%22,%22value%22:15}}
 
 Visit the following link when trying to encode url --> http://www.december.com/html/spec/esccodes.html
 */
+
 function getAllProductsV2(req, res, next) {
   // testing json
   if(req.query.json){
@@ -110,35 +94,6 @@ function getAllProductsV2(req, res, next) {
 }
 
 
-
-/* try w this url: http://localhost:3000/api/products?productType=galletitas
-or: http://localhost:3000/api/products?sort=asaleprice
-or: http://localhost:3000/api/products?sort=dsaleprice&productType=galletitas
-or the generic one: http://localhost:3000/api/products */
-function getAllProductsV1(req, res, next) {
-  var productTypedValue = req.query.productType ? `(SELECT id FROM productTypes WHERE description = '${req.query.productType}')` : 1;
-  var productTypeName = req.query.productType ? 'productType' : 1;
-  var sortFieldName = req.query.sort ? req.query.sort.substring(1) : 'id';
-  if (req.query.sort != null) {
-    var sortMode = req.query.sort.charAt(0) == 'd' ? 'DESC' : 'ASC';
-  }
-  else{
-    var sortMode = 'ASC';
-  }
-  db.any(`SELECT * FROM products WHERE ${productTypeName}=${productTypedValue} ORDER BY ${sortFieldName} ${sortMode}`)
-  .then(function (data) {
-    res.status(200)
-      .json({
-        status: 'success',
-        data: data,
-        message: `Retrieved ALL products ${req.query.productType ? 'matching ' + req.query.productType : ''}`
-      });
-  })
-  .catch(function (err) {
-    return next(err);
-  });
-}
- 
 
 
 // try: http://localhost:3000/api/products/1 
@@ -217,8 +172,6 @@ function getSingleProductIsElectroValue(req, res, next) {
 
 
 module.exports = {
-  getAllProductsV0: getAllProductsV0,
-  getAllProductsV1: getAllProductsV1,
   getAllProductsV2: getAllProductsV2,
   getSingleProduct: getSingleProduct,
   getSingleProductMarginInfo: getSingleProductMarginInfo,
