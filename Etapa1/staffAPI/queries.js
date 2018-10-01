@@ -67,9 +67,77 @@ function remove(res, next, tableName, id) {
 
 // add query functions
 
+function deletePasswords(data) {
+  data.forEach(e => {
+    delete e.password
+  });
+}
+
+function whereQuery(filter) {
+  let filters = JSON.parse(filter)
+  let where = ''
+
+  if (filters.length > 0) {
+    where = ' WHERE '
+    filters.forEach(f => {
+      where += `${f.field} = '${f.value}' AND `
+    });
+    where = where.substring(0, where.length -5);
+  }
+
+  return where
+}
+
+function orderQuery(sort) {
+  let sorts = JSON.parse(sort)
+  let order = ''
+
+  if (sorts.length > 0) {
+    order += ' ORDER BY '
+    sorts.forEach(f => {
+      order += `${f.field} ${f.value}, `
+    });
+    order = order.substring(0, order.length -2);
+  }
+
+  return order
+}
+
+function paginationQuery(paginate) {
+  let pagination = JSON.parse(paginate)
+  let offset = pagination.offset
+  let limit = pagination.limit
+
+  return (typeof offset === 'number' && typeof limit === 'number') ? ` OFFSET ${offset} LIMIT ${limit}` : ''
+}
+
 // Employees
 function getAllEmployees(req, res, next) {
-  return getAll(res, next, 'employees');
+  let filter = req.query.filter
+  let sort = req.query.sort
+  let pagination = req.query.pagination
+
+  let sql = 'SELECT * FROM employees'
+
+  sql += filter ? whereQuery(filter) : ''
+
+  sql += sort ? orderQuery(sort) : ''
+
+  sql += pagination ? paginationQuery(pagination) : ''
+
+  db.any(sql)
+    .then(function (data) {
+      deletePasswords(data)
+      res.status(200)
+        .json({
+          status: 'success',
+          data: data,
+          message: data.length ? 'Retrieved employees' : 'No employees found'
+        });
+    })
+    .catch(function (err) {
+      return next(err);
+    });
 }
 
 function getSingleEmployee(req, res, next) {
