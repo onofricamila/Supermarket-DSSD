@@ -1,5 +1,8 @@
 var promise = require('bluebird');
 var request = require('request');
+var http = require('http');
+
+const stockAPI = 'http://localhost:3000/api/'
 
 var options = {
   // Initialization Options
@@ -17,48 +20,38 @@ var db = pgp({
   password: process.env.DB_PASSWORD
 });
 
-var stockAPI = 'localhost:3001/api/'
-
-function getAll(res, next, tableName) {
-  db.any(`select * from ${tableName}`)
-    .then(function (data) {
-      res.status(200)
-        .json({
-          status: 'success',
-          data: data,
-          message: `Retrieved ALL ${tableName}`
-        });
+function getAll(next, tableName, callback) {
+  db.any('select * from $1', tableName)
+    .then((data) => {
+      data.forEach(e => {
+        delete e.password
+      });
+      callback(data)
     })
-    .catch(function (err) {
-      return next(err);
-    });
+    .catch((err) => {
+      return next(err)
+    })
 }
 
-function getSingle(res, next, tableName, id) {
+function getSingle(next, tableName, id, callback) {
   db.one(`select * from ${tableName} where id = $1`, id)
-    .then(function (data) {
-      res.status(200)
-        .json({
-          status: 'success',
-          data: data,
-          message: `Retrieved ONE element from ${tableName}`
-        });
-    })
-    .catch(function (err) {
-      return next(err);
-    });
+  .then((data) => {
+    delete data.password
+    callback(data)
+  })
+  .catch((err) => {
+    return next(err);
+  });
 }
 
 function remove(res, next, tableName, id) {
   db.result(`delete from ${tableName} where id = $1`, id)
     .then(function (result) {
-      /* jshint ignore:start */
       res.status(200)
-        .json({
-          status: 'success',
-          message: `Removed ${result.rowCount} element from ${tableName}`
-        });
-      /* jshint ignore:end */
+      .json({
+        status: 'success',
+        message: `Removed ${result.rowCount} element from ${tableName}`
+      });
     })
     .catch(function (err) {
       return next(err);
@@ -126,23 +119,31 @@ function getAllEmployees(req, res, next) {
   sql += pagination ? paginationQuery(pagination) : ''
 
   db.any(sql)
-    .then(function (data) {
-      deletePasswords(data)
-      res.status(200)
-        .json({
-          status: 'success',
-          data: data,
-          message: data.length ? 'Retrieved employees' : 'No employees found'
-        });
-    })
-    .catch(function (err) {
-      return next(err);
-    });
+  .then(function (data) {
+    deletePasswords(data)
+    res.status(200)
+      .json({
+        status: 'success',
+        data: data,
+        message: data.length ? 'Retrieved employees' : 'No employees found'
+      });
+  })
+  .catch(function (err) {
+    return next(err);
+  });
 }
 
 function getSingleEmployee(req, res, next) {
   var id = parseInt(req.params.id);
-  return getSingle(res, next, 'employees', id);
+  
+  getSingle(next, 'employees', id, (data) => {
+    res.status(200)
+    .json({
+      status: 'success',
+      data: data,
+      message: 'Retrieved ONE element from employees'
+    });
+  });
 }
 
 function removeEmployee(req, res, next) {
@@ -185,9 +186,15 @@ function updateEmployee(req, res, next) {
 }
 
 // EmployeeTypes
-
 function getAllEmployeeTypes(req, res, next) {
-  return getAll(res, next, 'employeeTypes');
+  getAll(next, 'employeeTypes', (data) => {
+    res.status(200)
+    .json({
+      status: 'success',
+      data: data,
+      message: 'Retrieved ALL employeeTypes'
+    });
+  })
 }
   
 function getSingleEmployeeType(req, res, next) {
@@ -231,45 +238,8 @@ function updateEmployeeType(req, res, next) {
     });
 }
 
-// -------------- TODO --------------
-
-
-/*
-// development error handler
-// will print stacktrace
-if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status( err.code || 500 )
-    .json({
-      status: 'error',
-      message: err
-    });
-  });
-}
-
-// production error handler
-// no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-  res.status(err.status || 500)
-  .json({
-    status: 'error',
-    message: err.message
-  });
-});
-*/
-
 function isEmployeeEmail(email, next, callback) {
   db.any('select * from employees where email = $1', email)
-  .then(function(data) {
-    callback(data.length > 0)
-  })
-  .catch(function (err) {
-    return next(err)
-  })
-}
-
-function isEmployeeID(id, next, callback) {
-  db.any('select * from employees where id = $1', id)
   .then(function(data) {
     callback(data.length > 0)
   })
@@ -288,34 +258,12 @@ function isEmployee(req, res, next) {
       code = 200
       response.status = 'success'
       response.data.isEmployee = true
-      response.message = ' is an employee email'
+      response.message = email + ' is an employee email'
     } else {
       code = 404
       response.status = 'resource not found'
       response.data.isEmployee = false
-      response.message = ' is not an employee email'
-    }
-  
-    res.status(code).json(response)
-  })
-}
-
-function isEmployeeID(req, res, next) {
-  let id = req.params.id
-  let response = {'data': {'id': id}}
-  let code = 500
-
-  isEmployeeEmail(email, next, (isEmployee) => {
-    if (isEmployee) {
-      code = 200
-      response.status = 'success'
-      response.data.isEmployee = true
-      response.message = ' is an employee email'
-    } else {
-      code = 404
-      response.status = 'resource not found'
-      response.data.isEmployee = false
-      response.message = ' is not an employee email'
+      response.message = email + ' is not an employee email'
     }
   
     res.status(code).json(response)
@@ -323,22 +271,12 @@ function isEmployeeID(req, res, next) {
 }
 
 function calculatePrice(email, productID, next, callback) {
-  isEmployee(email, next, (isEmployee) => {
-
-    request.get(stockAPI + productID)
-    .on('response', (response) => {
-      let parsed = JSON.parse(response)
+  isEmployeeEmail(email, next, (isEmployee) => {
+    request.get(stockAPI + 'products/' + productID, (error, response, body) => {
+      let parsed = JSON.parse(body)
       let product = parsed.data
-
-      if (isEmployee) return callback(product, product.price)
-
-      request.get(stockAPI + 'priceFor/' + productID)
-      .on('response', (response) => {
-        let parsed = JSON.parse(response)
-        let price = parsed.data
-
-        callback(product, price)
-      })
+      let price = isEmployee ? product.costprice : saleprice
+      callback(product, price)
     })
   })
 }
@@ -348,16 +286,15 @@ function priceFor(req, res, next) {
   let productID = req.params.product
 
   calculatePrice(email, productID, next, (product, price) => {
-    let response = {
+    res.status(200).json({
       'status': 'success',
       'data': {
+        'price': price,
         'product': product,
-        'price': price
+        'email': email
       },
-      'message': 'final price for ' + product.name + ' is ' + price
-    }
-
-    res.status(200).json(response)
+      'message': 'final price for product ' + product.name + ' is ' + price + ' for client ' + email
+    })
   })
 }
 
@@ -375,6 +312,5 @@ module.exports = {
   removeEmployeeType: removeEmployeeType,
 
   isEmployee: isEmployee,
-  isEmployeeID: isEmployeeID,
   priceFor: priceFor
 };
