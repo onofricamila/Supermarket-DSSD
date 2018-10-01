@@ -21,16 +21,16 @@ var db = pgp({
 });
 
 function getAll(next, tableName, callback) {
-  db.any('select * from $1', tableName)
-    .then((data) => {
-      data.forEach(e => {
-        delete e.password
-      });
-      callback(data)
-    })
-    .catch((err) => {
-      return next(err)
-    })
+  db.any(`select * from ${tableName}`)
+  .then((data) => {
+    data.forEach(e => {
+      delete e.password
+    });
+    callback(data)
+  })
+  .catch((err) => {
+    return next(err)
+  })
 }
 
 function getSingle(next, tableName, id, callback) {
@@ -40,7 +40,7 @@ function getSingle(next, tableName, id, callback) {
     callback(data)
   })
   .catch((err) => {
-    return next(err);
+    callback(false);
   });
 }
 
@@ -121,12 +121,28 @@ function getAllEmployees(req, res, next) {
   db.any(sql)
   .then(function (data) {
     deletePasswords(data)
-    res.status(200)
-      .json({
-        status: 'success',
-        data: data,
-        message: data.length ? 'Retrieved employees' : 'No employees found'
-      });
+
+    let response = {}
+    let code = 500
+
+    if (data.length) {
+      code = 200
+      response.status = 'success'
+      response.data = data
+      response.message = 'Retrieved employees'
+    } else {
+      code = 404
+      response.status = 'resource not found'
+      response.data = data
+      response.configuration = {
+        filter: filter,
+        sort: sort,
+        pagination: pagination
+      }
+      response.message = 'No employees found with current configuration'
+    }
+
+    res.status(code).json(response);
   })
   .catch(function (err) {
     return next(err);
@@ -137,12 +153,22 @@ function getSingleEmployee(req, res, next) {
   var id = parseInt(req.params.id);
   
   getSingle(next, 'employees', id, (data) => {
-    res.status(200)
-    .json({
-      status: 'success',
-      data: data,
-      message: 'Retrieved ONE element from employees'
-    });
+    let response = {}
+    let code = 500
+
+    if (data) {
+      code = 200
+      response.status = 'success'
+      response.data = data
+      response.message = 'Retrieved ONE element from employees'
+    } else {
+      code = 404
+      response.status = 'resource not found'
+      response.data = data
+      response.message = 'Employee not found'
+    }
+
+    res.status(code).json(response);
   });
 }
 
@@ -199,7 +225,25 @@ function getAllEmployeeTypes(req, res, next) {
   
 function getSingleEmployeeType(req, res, next) {
   var id = parseInt(req.params.id);
-  return getSingle(res, next, 'employeeTypes', id);
+
+  getSingle(next, 'employeeTypes', id, (data) => {
+    let response = {}
+    let code = 500
+
+    if (data) {
+      code = 200
+      response.status = 'success'
+      response.data = data
+      response.message = 'Retrieved ONE element from employeeTypes'
+    } else {
+      code = 404
+      response.status = 'resource not found'
+      response.data = data
+      response.message = 'EmployeeType not found'
+    }
+
+    res.status(code).json(response);
+  });
 }
 
 function removeEmployeeType(req, res, next) {
