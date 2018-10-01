@@ -188,10 +188,10 @@ app.use(function(err, req, res, next) {
 });
 */
 
-function isEmployeeEmail(email) {
+function isEmployeeEmail(email, next, callback) {
   db.any('select * from employees where email = $1', email)
   .then(function(data) {
-    return data.length > 0
+    callback(data.length > 0)
   })
   .catch(function (err) {
     return next(err)
@@ -203,52 +203,58 @@ function isEmployee(req, res, next) {
   let response = {'data': {'email': email}}
   let code = 500
 
-  if (isEmployeeEmail(email)) {
-    code = 200
-    response.status = 'success'
-    response.data.isEmployee = true
-    response.message = ' is an employee email'
-  } else {
-    code = 404
-    response.status = 'resource not found'
-    response.data.isEmployee = false
-    response.message = ' is not an employee email'
-  }
+  isEmployeeEmail(email, next, (isEmployee) => {
+    if (isEmployee) {
+      code = 200
+      response.status = 'success'
+      response.data.isEmployee = true
+      response.message = ' is an employee email'
+    } else {
+      code = 404
+      response.status = 'resource not found'
+      response.data.isEmployee = false
+      response.message = ' is not an employee email'
+    }
   
-  res.status(code).json(response)
+    res.status(code).json(response)
+  })
+}
+
+function calculatePrice(email, productID, next, callback) {
+  isEmployee(email, next, (isEmployee) => {
+
+    request.get(stockAPI + productID)
+    .on('response', (response) => {
+      let parsed = JSON.parse(response)
+      let product = parsed.data
+
+      if (isEmployee) return callback(product, product.price)
+
+      request.get(stockAPI + 'priceFor/' + productID)
+      .on('response', (response) => {
+        let parsed = JSON.parse(response)
+        let price = parsed.data
+
+        callback(product, price)
+      })
+    })
+  })
 }
 
 function priceFor(req, res, next) {
   let email = req.params.email
-  let product = req.params.product
-  request()
-  db.any(`select * from employees where email = $1`, email)
-  .then(function (data) {
-    if (data.length == 0) {
-      code = 404;
-      status = 'resource not found';
-      isEmployee = false;
-      message = ' is not an employee email';
-    } else {
-      code = 200;
-      status = 'success';
-      isEmployee = true;
-      message = ' is an employee email';
-    }
+  let productID = req.params.product
 
-    res.status(code)
-      .json({
-        status: status,
-        data: {
-          'email': email,
-          'isEmployee': isEmployee
-        },
-        message: email + message
-      });
+  calculatePrice(email, productID, next, (product, price) => {
+    res.status(200).json({
+      'status': 'success',
+      'data': {
+        'product': product.name,
+        'price': price
+      },
+      'message': 'final price for ' + product.name + ' is ' + price
+    })
   })
-  .catch(function (err) {
-    return next(err);
-  });
 }
 
 module.exports = {
