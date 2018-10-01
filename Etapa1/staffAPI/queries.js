@@ -1,4 +1,5 @@
 var promise = require('bluebird');
+var request = require('request');
 
 var options = {
   // Initialization Options
@@ -6,6 +7,8 @@ var options = {
 };
 
 var pgp = require('pg-promise')(options);
+const qrec = pgp.errors.queryResultErrorCode;
+
 var db = pgp({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
@@ -185,7 +188,68 @@ app.use(function(err, req, res, next) {
 });
 */
 
+function isEmployeeEmail(email) {
+  db.any('select * from employees where email = $1', email)
+  .then(function(data) {
+    return data.length > 0
+  })
+  .catch(function (err) {
+    return next(err)
+  })
+}
 
+function isEmployee(req, res, next) {
+  let email = req.params.email
+  let response = {'data': {'email': email}}
+  let code = 500
+
+  if (isEmployeeEmail(email)) {
+    code = 200
+    response.status = 'success'
+    response.data.isEmployee = true
+    response.message = ' is an employee email'
+  } else {
+    code = 404
+    response.status = 'resource not found'
+    response.data.isEmployee = false
+    response.message = ' is not an employee email'
+  }
+  
+  res.status(code).json(response)
+}
+
+function priceFor(req, res, next) {
+  let email = req.params.email
+  let product = req.params.product
+  request()
+  db.any(`select * from employees where email = $1`, email)
+  .then(function (data) {
+    if (data.length == 0) {
+      code = 404;
+      status = 'resource not found';
+      isEmployee = false;
+      message = ' is not an employee email';
+    } else {
+      code = 200;
+      status = 'success';
+      isEmployee = true;
+      message = ' is an employee email';
+    }
+
+    res.status(code)
+      .json({
+        status: status,
+        data: {
+          'email': email,
+          'isEmployee': isEmployee
+        },
+        message: email + message
+      });
+  })
+  .catch(function (err) {
+    return next(err);
+  });
+}
 
 module.exports = {
   getAllEmployees: getAllEmployees,
@@ -198,5 +262,8 @@ module.exports = {
   getSingleEmployeeType: getSingleEmployeeType,
   createEmployeeType: createEmployeeType,
   updateEmployeeType: updateEmployeeType,
-  removeEmployeeType: removeEmployeeType
+  removeEmployeeType: removeEmployeeType,
+
+  isEmployee: isEmployee,
+  priceFor: priceFor
 };

@@ -21,4 +21,10 @@ router.post('/api/employeeTypes', db.createEmployeeType);
 router.put('/api/employeeTypes/:id', db.updateEmployeeType);
 router.delete('/api/employeeTypes/:id', db.removeEmployeeType);
 
+
+// Project Endpoints
+router.get('/api/isEmployee/:email', db.isEmployee);
+router.get('/api/priceFor/:email/:product', db.priceFor);
+
+
 module.exports = router;
