@@ -72,9 +72,9 @@ function getAllProductsV2(req, res, next) {
     sql += ` LIMIT ${pagination.limit} OFFSET ${pagination.offset}`;
     console.log(sql);
     var paginationData = {
-          next: `/api/products?pagination={%22offset%22:${pagination.offset + pagination.limit},%22limit%22:${pagination.limit}}`, // BUG -> we need to find a way to determine when there are no more pages
-          self: `/api/products?pagination={%22offset%22:${pagination.offset},%22limit%22:${pagination.limit}}`,
-          prev: pagination.offset != 0 ? `/api/products?pagination={%22offset%22:${pagination.offset - pagination.limit},%22limit%22:${pagination.limit}}` : null,
+          next: `pagination={%22offset%22:${pagination.offset + pagination.limit},%22limit%22:${pagination.limit}}`, // BUG -> we need to find a way to determine when there are no more pages
+          self: `pagination={%22offset%22:${pagination.offset},%22limit%22:${pagination.limit}}`,
+          prev: pagination.offset != 0 ? `pagination={%22offset%22:${pagination.offset - pagination.limit},%22limit%22:${pagination.limit}}` : null,
     }
   }
 
