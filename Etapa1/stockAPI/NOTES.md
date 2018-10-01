@@ -1,19 +1,8 @@
 # Supermarket-DSSD | Stock API
 
-## Tener en cuenta:
-- Se debe tener instalado Node.js, y psql (Usamos [PostgreSQL](https://www.tutorialspoint.com/postgresql/))
-- Se debe agregar un archivo .env que setee la info de la db (Usamos [dotenv](https://www.npmjs.com/package/dotenv) para ocultar los datos importantes de acceso a la db)
+## Notes:
 
-## Como usar la api:
-
-- Una vez descargados los archivos correspondientes a la misma, parados en la carpeta Supermarket-DSSD/Etapa1/stockAPI, correr ... 
-    - ` psql -f stock.sql` para inicializar la db que usa la API
-    - ` npm install` para instalar las dependencias que necesita la API para funcionar correctamente.
-    - ` npm start` para levantar un servidor web en el puerto 3000 y poder acceder a los endpoints.
-
-## Notas:
-
-- Para hacer esta API se siguió el siguiente [tutorial](https://mherman.org/blog/designing-a-restful-api-with-node-and-postgres/)
+- So as to create the API, we folloed this [tutorial](https://mherman.org/blog/designing-a-restful-api-with-node-and-postgres/)
 
 
 ## Tips:

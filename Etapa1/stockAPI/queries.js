@@ -25,7 +25,7 @@ Pretending to sort: http://localhost:3000/api/products?sort={%22first%22:{%22fie
     or sorting by multiple fields: http://localhost:3000/api/products?sort={%22first%22:{%22field%22:%22saleprice%22,%22mode%22:%22ASC%22},%22second%22:{%22field%22:%22name%22,%22mode%22:%22ASC%22}} 
 
 Pretending to filter: http://localhost:3000/api/products?filter={%22first%22:{%22field%22:%22saleprice%22,%22operator%22:%22=%22,%22value%22:15}}
-    or filtering by multiple fields: http://localhost:3000/api/products?filter={%22first%22:{%22field%22:%22costprice%22,%22operator%22:%22%3C%22,%22value%22:5},%22second%22:{%22field%22:%22name%22,%22operator%22:%22LIKE%22,%22value%22:%22o%25%22}}
+    or filtering by multiple fields:  http://localhost:3000/api/products?filter={%22first%22:{%22field%22:%22saleprice%22,%22operator%22:%22=%22,%22value%22:10},%22second%22:{%22field%22:%22costprice%22,%22operator%22:%22%3C%22,%22value%22:5}}
 
 Mixing sorting and filtering: http://localhost:3000/api/products?sort={%22first%22:{%22field%22:%22name%22,%22mode%22:%22DESC%22}}&filter={%22first%22:{%22field%22:%22saleprice%22,%22operator%22:%22=%22,%22value%22:15}}
 
@@ -41,9 +41,9 @@ function getAllProductsV2(req, res, next) {
   var sort = req.query.sort;
   var filter = req.query.filter;
   var pagination = req.query.pagination;
-  
-   // let's filter
-   if (filter){ 
+
+  // let's filter
+  if (filter){ 
     sql += ` WHERE`;
     filter = JSON.parse(filter);
     for (var f in filter) {
@@ -72,21 +72,26 @@ function getAllProductsV2(req, res, next) {
     sql += ` LIMIT ${pagination.limit} OFFSET ${pagination.offset}`;
     console.log(sql);
     var paginationData = {
-          next: `/api/products?pagination={%22offset%22:${pagination.offset + pagination.limit},%22limit%22:${pagination.limit}}`, // BUG -> we need to find a way to determine when there are no more pages
-          self: `/api/products?pagination={%22offset%22:${pagination.offset},%22limit%22:${pagination.limit}}`,
-          prev: pagination.offset != 0 ? `/api/products?pagination={%22offset%22:${pagination.offset - pagination.limit},%22limit%22:${pagination.limit}}` : null,
+          next: `pagination={%22offset%22:${pagination.offset + pagination.limit},%22limit%22:${pagination.limit}}`, 
+          self: `pagination={%22offset%22:${pagination.offset},%22limit%22:${pagination.limit}}`,
+          prev: pagination.offset != 0 ? `pagination={%22offset%22:${pagination.offset - pagination.limit},%22limit%22:${pagination.limit}}` : null,
     }
   }
 
   // query the db
   db.any(sql)
     .then(function (data) {
+      if (pagination) {
+        var hasNext = (Object.keys(data).length == pagination.limit);
+        console.log(hasNext);
+        paginationData.next = hasNext ? paginationData.next : null;
+      };
       res.status(200)
         .json({
           status: 'success',
           data: data,
-          messsaleprice: 'Retrieved ALL products',
-          paginationLinks: paginationData || null
+          messsage: 'Retrieved ANY products',
+          paginationData: paginationData || null
         });
     })
     .catch(function (err) {
@@ -127,18 +132,18 @@ function getSingleProductMarginInfo(req, res, next) {
   var marginGt10PercentSql = `SELECT CAST(COUNT(1) AS BIT) as boolean
                               FROM products
                               WHERE id = $1 
-                                AND (${marginSql}) > (${salePriceTenPercentSql})`;
+                                AND ($2) > (${salePriceTenPercentSql})`;
   db.one(marginSql, id)
     .then(function (data) {
         finalData.margin = data.margin;
-        db.one(marginGt10PercentSql, id)
+        db.one(marginGt10PercentSql, [id, finalData.margin])
           .then(function (data) {
             finalData.marginGt10PercentValue = data.boolean;
             res.status(200)
               .json({
                 status: 'success',
                 data: finalData,
-                message: `Retrieving product margin and [0 | 1] representing the fact of product margin surpassing product sale price 10 percent or not (boolean)`
+                message: `Retrieving product margin and [1 | 0] representing the fact of product margin surpassing product sale price 10 percent or not (boolean)`
               });
         })
     })
@@ -162,7 +167,7 @@ function getSingleProductIsElectroValue(req, res, next) {
         .json({
           status: 'success',
           data: data.boolean,
-          message: `Rtrieved [0 | 1] representing the fact of a product being electric or not (boolean)`
+          message: `Rtrieved [1 | 0] representing the fact of a product being electric or not (boolean)`
         });
     })
     .catch(function (err) {
