@@ -50,7 +50,7 @@ Algunos ejemplos:
 ```
  GET /api/products?sort={%22first%22:{%22field%22:%22name%22,%22mode%22:%22DESC%22}}&filter={%22first%22:{%22field%22:%22saleprice%22,%22operator%22:%22=%22,%22value%22:15}}
 
- --> Devuelve todos los productos cutyo precio de venta es igual a $15, ordenados por nombre de manera ascendente.
+ --> Devuelve todos los productos cuyo precio de venta es igual a $15, ordenados por nombre de manera ascendente.
 ```
 
 ```
@@ -94,7 +94,7 @@ Algunos ejemplos:
 ```
 GET /api/employees?pagination={"offset":3,"limit":3}
 
---> Devuelve 3 productos considerando se saltean los 3 primeros
+--> Devuelve 3 empleados considerando se saltean los 3 primeros
 ```
 
 **GET /api/employees/:id**
