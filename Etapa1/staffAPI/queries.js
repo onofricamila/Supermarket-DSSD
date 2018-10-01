@@ -198,9 +198,41 @@ function isEmployeeEmail(email, next, callback) {
   })
 }
 
+function isEmployeeID(id, next, callback) {
+  db.any('select * from employees where id = $1', id)
+  .then(function(data) {
+    callback(data.length > 0)
+  })
+  .catch(function (err) {
+    return next(err)
+  })
+}
+
 function isEmployee(req, res, next) {
   let email = req.params.email
   let response = {'data': {'email': email}}
+  let code = 500
+
+  isEmployeeEmail(email, next, (isEmployee) => {
+    if (isEmployee) {
+      code = 200
+      response.status = 'success'
+      response.data.isEmployee = true
+      response.message = ' is an employee email'
+    } else {
+      code = 404
+      response.status = 'resource not found'
+      response.data.isEmployee = false
+      response.message = ' is not an employee email'
+    }
+  
+    res.status(code).json(response)
+  })
+}
+
+function isEmployeeID(req, res, next) {
+  let id = req.params.id
+  let response = {'data': {'id': id}}
   let code = 500
 
   isEmployeeEmail(email, next, (isEmployee) => {
@@ -271,5 +303,6 @@ module.exports = {
   removeEmployeeType: removeEmployeeType,
 
   isEmployee: isEmployee,
+  isEmployeeID: isEmployeeID,
   priceFor: priceFor
 };

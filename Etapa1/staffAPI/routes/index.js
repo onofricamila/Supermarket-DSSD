@@ -24,6 +24,7 @@ router.delete('/api/employeeTypes/:id', db.removeEmployeeType);
 
 // Project Endpoints
 router.get('/api/isEmployee/:email', db.isEmployee);
+router.get('/api/isEmployeeID/:id', db.isEmployeeID);
 router.get('/api/priceFor/:email/:product', db.priceFor);
 
 
