@@ -85,8 +85,8 @@ function getAllProductsV2(req, res, next) {
         .json({
           status: 'success',
           data: data,
-          messsaleprice: 'Retrieved ALL products',
-          paginationLinks: paginationData || null
+          messsage: 'Retrieved ALL products',
+          paginationData: paginationData || null
         });
     })
     .catch(function (err) {
