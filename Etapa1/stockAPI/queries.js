@@ -72,7 +72,7 @@ function getAllProductsV2(req, res, next) {
     sql += ` LIMIT ${pagination.limit} OFFSET ${pagination.offset}`;
     console.log(sql);
     var paginationData = {
-          next: `pagination={%22offset%22:${pagination.offset + pagination.limit},%22limit%22:${pagination.limit}}`, // BUG -> we need to find a way to determine when there are no more pages
+          next: `pagination={%22offset%22:${pagination.offset + pagination.limit},%22limit%22:${pagination.limit}}`, // BUG -> we need to find a good way to determine when there are no more pages
           self: `pagination={%22offset%22:${pagination.offset},%22limit%22:${pagination.limit}}`,
           prev: pagination.offset != 0 ? `pagination={%22offset%22:${pagination.offset - pagination.limit},%22limit%22:${pagination.limit}}` : null,
     }
@@ -127,11 +127,11 @@ function getSingleProductMarginInfo(req, res, next) {
   var marginGt10PercentSql = `SELECT CAST(COUNT(1) AS BIT) as boolean
                               FROM products
                               WHERE id = $1 
-                                AND (${marginSql}) > (${salePriceTenPercentSql})`;
+                                AND ($2) > (${salePriceTenPercentSql})`;
   db.one(marginSql, id)
     .then(function (data) {
         finalData.margin = data.margin;
-        db.one(marginGt10PercentSql, id)
+        db.one(marginGt10PercentSql, [id, finalData.margin])
           .then(function (data) {
             finalData.marginGt10PercentValue = data.boolean;
             res.status(200)
