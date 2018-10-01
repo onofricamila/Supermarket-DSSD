@@ -74,3 +74,34 @@ Devuelve un booleano que indica si el producto que se le indica por el parámetr
 
 
 ### :rocket: staffAPI
+
+
+**GET /api/employees**
+Lista todos los empleados, cada uno con sus atributos, menos su contraseña. Se pueden pasar parametros json por la url para obtener la funcionalidad de ordenamiento, filtrado y paginación. Estos son:
+
+- parámetro _sort_, arreglo que contiene los distintos criterios por los cuales se va a querer ordenar. Cada criterio tiene _field_(indica que campo se va a usar para ordenar) y _value_ (si se ordenará de forma ascendente o descedente).
+- parámetro _filter_, arreglo que contiene todos los criterios de filtro. Cada criterio debe indicar _field_(campo a analizar) y _value_(valor que se busca).
+- parámetro _pagination_, que en su interior indica _limit_(límite) y _offset_(a partir de cual producto se empiezan a devolver productos).
+
+Algunos ejemplos:
+
+```
+ GET /api/employees?sort=[{"field":"id","value":"DESC"}]&filter=[{"field":"employeetype","value":1}]
+
+ --> Devuelve todos los empleados cuyo tipo de empleado sea 1, ordenados por id de forma descendiente.
+```
+
+```
+GET /api/employees?pagination={"offset":3,"limit":3}
+
+--> Devuelve 3 productos considerando se saltean los 3 primeros
+```
+
+**GET /api/employees/:id**
+Devuelve el producto que se le indica por el parámetro numérico _id_
+
+**GET /api/isEmployee/:email**
+Devuelve si el email ingresado por parametro email pertenece a algun empleado registrado.
+
+**GET /api/priceFor/:email/:productID**
+Devuelve el precio de venta del producto ingresado, para el email ingresado. Si el email ingresado pertenece a un empleado, el precio devuelto sera el costo del producto. Caso contrario devolvera el precio normal.
