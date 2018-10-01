@@ -17,6 +17,8 @@ var db = pgp({
   password: process.env.DB_PASSWORD
 });
 
+var stockAPI = 'localhost:3001/api/'
+
 function getAll(res, next, tableName) {
   db.any(`select * from ${tableName}`)
     .then(function (data) {
@@ -278,14 +280,16 @@ function priceFor(req, res, next) {
   let productID = req.params.product
 
   calculatePrice(email, productID, next, (product, price) => {
-    res.status(200).json({
+    let response = {
       'status': 'success',
       'data': {
-        'product': product.name,
+        'product': product,
         'price': price
       },
       'message': 'final price for ' + product.name + ' is ' + price
-    })
+    }
+
+    res.status(200).json(response)
   })
 }
 
