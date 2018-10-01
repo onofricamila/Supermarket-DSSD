@@ -85,7 +85,7 @@ function getAllProductsV2(req, res, next) {
         .json({
           status: 'success',
           data: data,
-          messsage: 'Retrieved ALL products',
+          messsage: 'Retrieved MANY products',
           paginationData: paginationData || null
         });
     })
@@ -138,7 +138,7 @@ function getSingleProductMarginInfo(req, res, next) {
               .json({
                 status: 'success',
                 data: finalData,
-                message: `Retrieving product margin and [0 | 1] representing the fact of product margin surpassing product sale price 10 percent or not (boolean)`
+                message: `Retrieving product margin and [1 | 0] representing the fact of product margin surpassing product sale price 10 percent or not (boolean)`
               });
         })
     })
@@ -162,7 +162,7 @@ function getSingleProductIsElectroValue(req, res, next) {
         .json({
           status: 'success',
           data: data.boolean,
-          message: `Rtrieved [0 | 1] representing the fact of a product being electric or not (boolean)`
+          message: `Rtrieved [1 | 0] representing the fact of a product being electric or not (boolean)`
         });
     })
     .catch(function (err) {
