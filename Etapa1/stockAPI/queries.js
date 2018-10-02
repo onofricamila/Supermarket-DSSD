@@ -24,10 +24,10 @@ Simpler url: http://localhost:3000/api/products
 Pretending to sort: http://localhost:3000/api/products?sort=[{%22field%22:%22name%22,%22mode%22:%22DESC%22}]
     or sorting by multiple fields: http://localhost:3000/api/products?sort=[{%22field%22:%22saleprice%22,%22mode%22:%22DESC%22},{%22field%22:%22name%22,%22mode%22:%22ASC%22}]
 
-Pretending to filter: http://localhost:3000/api/products?filter={%22first%22:{%22field%22:%22saleprice%22,%22operator%22:%22=%22,%22value%22:15}}
-    or filtering by multiple fields:  http://localhost:3000/api/products?filter={%22first%22:{%22field%22:%22saleprice%22,%22operator%22:%22=%22,%22value%22:10},%22second%22:{%22field%22:%22costprice%22,%22operator%22:%22%3C%22,%22value%22:5}}
+Pretending to filter: http://localhost:3000/api/products?filter=[{%22field%22:%22saleprice%22,%22operator%22:%22=%22,%22value%22:15}]
+    or filtering by multiple fields: http://localhost:3000/api/products?filter=[{%22field%22:%22saleprice%22,%22operator%22:%22=%22,%22value%22:10},{%22field%22:%22costprice%22,%22operator%22:%22%3C%22,%22value%22:5}]
 
-Mixing sorting and filtering: http://localhost:3000/api/products?sort={%22first%22:{%22field%22:%22name%22,%22mode%22:%22DESC%22}}&filter={%22first%22:{%22field%22:%22saleprice%22,%22operator%22:%22=%22,%22value%22:15}}
+Mixing sorting and filtering: http://localhost:3000/api/products?sort=[{%22field%22:%22name%22,%22mode%22:%22DESC%22}]&filter=[{%22field%22:%22saleprice%22,%22operator%22:%22=%22,%22value%22:15}]
 
 Pretending to pagiante sending only limit: http://localhost:3000/api/products?pagination={%22limit%22:3}
     or sending also offset: http://localhost:3000/api/products?pagination={%22offset%22:3,%22limit%22:3}
@@ -58,9 +58,9 @@ function getAllProductsV2(req, res, next) {
   if (sort){ 
     sql += ` ORDER BY`;
     sort = JSON.parse(sort);
-    for (var s in sort) {
-      sql += ` ${sort[s]["field"]}  ${sort[s].mode},`;
-    }
+    sort.forEach(s => {
+      sql += ` ${s.field}  ${s.mode},`;
+    });
     sql = sql.substring(0, sql.length -1);
     console.log(sql);
   }
