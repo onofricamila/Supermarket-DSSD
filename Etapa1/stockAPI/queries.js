@@ -21,8 +21,8 @@ var db = pgp({
 /* 
 Simpler url: http://localhost:3000/api/products
 
-Pretending to sort: http://localhost:3000/api/products?sort={%22first%22:{%22field%22:%22name%22,%22mode%22:%22ASC%22}}
-    or sorting by multiple fields: http://localhost:3000/api/products?sort={%22first%22:{%22field%22:%22saleprice%22,%22mode%22:%22ASC%22},%22second%22:{%22field%22:%22name%22,%22mode%22:%22ASC%22}} 
+Pretending to sort: http://localhost:3000/api/products?sort=[{%22field%22:%22name%22,%22mode%22:%22DESC%22}]
+    or sorting by multiple fields: http://localhost:3000/api/products?sort=[{%22field%22:%22saleprice%22,%22mode%22:%22DESC%22},{%22field%22:%22name%22,%22mode%22:%22ASC%22}]
 
 Pretending to filter: http://localhost:3000/api/products?filter={%22first%22:{%22field%22:%22saleprice%22,%22operator%22:%22=%22,%22value%22:15}}
     or filtering by multiple fields:  http://localhost:3000/api/products?filter={%22first%22:{%22field%22:%22saleprice%22,%22operator%22:%22=%22,%22value%22:10},%22second%22:{%22field%22:%22costprice%22,%22operator%22:%22%3C%22,%22value%22:5}}
@@ -46,9 +46,9 @@ function getAllProductsV2(req, res, next) {
   if (filter){ 
     sql += ` WHERE`;
     filter = JSON.parse(filter);
-    for (var f in filter) {
-      sql += ` ${filter[f]["field"]} ${filter[f].operator} '${filter[f].value}' AND`;
-    }
+    filter.forEach(f => {
+      sql += ` ${f.field} ${f.operator} '${f.value}' AND`;
+    });
     sql = sql.substring(0, sql.length -3);
     console.log(sql);
   }
