@@ -41,14 +41,14 @@ Elgimos trabajar con Node.js (específiccamente usando el framework Express.js),
 **GET /api/products**
 Lista todos los productos, cada uno con sus atributos. Se pueden pasar parametros json por la url para obtener la funcionalidad de ordenamiento, filtrado y paginación. Estos son:
 
-- parámetro _sort_, que en su interior posee los distintos criterios por los cuales se va a querer ordenar. Cada criterio tiene _field_(indica que campo se va a usar para ordenar) y _mode_(si se ordenará de forma ascendente o descedente).
-- parámetro _filter_, que en su interior posee todos los criterios de filtro. Cada criterio debe indicar _field_(campo a analizar) _operator_(operador a usar) y _value_(valor que se busca).
-- parámetro _pagination_, que en su interior indica _limit_(límite) y puede indicar o no _offset_(a partir de cual producto se empiezan a devolver productos).
+- parámetro _sort_, arreglo que en su interior posee los distintos criterios (json) por los cuales se va a querer ordenar. Cada criterio tiene _field_(indica que campo se va a usar para ordenar) y _mode_(si se ordenará de forma ascendente o descedente).
+- parámetro _filter_, arreglo que en su interior posee todos los criterios de filtro (json). Cada criterio debe indicar _field_(campo a analizar) _operator_(operador a usar) y _value_(valor que se busca).
+- parámetro _pagination_, json que en su interior indica _limit_(límite) y puede indicar o no _offset_(a partir de cual producto se empiezan a devolver productos).
 
 Algunos ejemplos:
 
 ```
- GET /api/products?sort={%22first%22:{%22field%22:%22name%22,%22mode%22:%22DESC%22}}&filter={%22first%22:{%22field%22:%22saleprice%22,%22operator%22:%22=%22,%22value%22:15}}
+ GET /api/products?sort=[{%22field%22:%22name%22,%22mode%22:%22DESC%22}]&filter=[{%22field%22:%22saleprice%22,%22operator%22:%22=%22,%22value%22:15}]
 
  --> Devuelve todos los productos cuyo precio de venta es igual a $15, ordenados por nombre de manera ascendente.
 ```
