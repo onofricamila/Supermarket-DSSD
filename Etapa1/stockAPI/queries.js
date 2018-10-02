@@ -80,8 +80,11 @@ function getAllProducts(req, res, next) {
         };
       }
 
-      res.status(code).json(response);
+      res.status(code).json(response)
     })
+    .catch(function (err) {
+      return next(err);
+    });
   }
 
 
@@ -157,6 +160,9 @@ function getSingleProduct(req, res, next) {
       }
       res.status(code).json(response);
     })
+    .catch(function (err) {
+      return next(err);
+    });
     
 }
 
