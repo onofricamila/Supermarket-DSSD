@@ -54,22 +54,35 @@ function getAllProducts(req, res, next) {
   // query the db
   db.any(sql)
     .then(function (data) {
-      if (pagination) {
-        var hasNext = (Object.keys(data).length == pagination.limit);
-        paginationData.next = hasNext ? paginationData.next : null;
-      };
-      res.status(200)
-        .json({
+      let code = 500;
+      let response;
+
+      if (data.length) {
+        code = 200;
+        if (pagination) {
+          var hasNext = (Object.keys(data).length == pagination.limit);
+          paginationData.next = hasNext ? paginationData.next : null;
+        };
+        response = {
           status: 'success',
           data: data,
-          messsage: 'Retrieved ANY products',
+          messsage: 'Retrieved MANY products',
           paginationData: paginationData || null
-        });
+        };
+      }
+      else{
+        code = 404;
+        response = {
+          status: 'resource not found',
+          data: data,
+          messsage: 'No products retrieved ',
+          paginationData: paginationData || null
+        };
+      }
+
+      res.status(code).json(response);
     })
-    .catch(function (err) {
-      return next(err);
-    });
-}
+  }
 
 
 
@@ -121,25 +134,36 @@ function paginationQuery(pagination){
 // try: http://localhost:3000/api/products/1 
 function getSingleProduct(req, res, next) {
   var id = parseInt(req.params.id);
-  db.one(`select * from products where id = $1`, id)
+  db.any(`select * from products where id = $1`, id)
     .then(function (data) {
-      res.status(200)
-        .json({
-          status: 'success',
-          data: data,
-          message: `Retrieved ONE element from products`
-        });
-    })
-    .catch(function (err) {
-      return next(err);
-    });
+      let code = 500;
+      let response;
 
+      if (data.length){
+        code = 200;
+        response = {
+          status: 'success',
+          data: data[0],
+          message: `Retrieved ONE product`
+        }
+      }
+      else{
+        code = 404;
+        response = {
+          status: 'resource not found',
+          data: data,
+          message: `No product retrieved`
+        }
+      }
+      res.status(code).json(response);
+    })
+    
 }
 
 
 
 
-// try: http://localhost:3000/api/products/1/marginInfo
+// try: http://localhost:3000/api/products/1/marginInfo --> if the product does not exist, 0 is returned
 function getSingleProductMarginInfo(req, res, next) {
   var id = parseInt(req.params.id);
   var finalData = {}
@@ -171,7 +195,7 @@ function getSingleProductMarginInfo(req, res, next) {
 
 
 
-// try: http://localhost:3000/api/products/1/isElectroValue 
+// try: http://localhost:3000/api/products/1/isElectroValue --> if the product does not exist, 0 is returned
 function getSingleProductIsElectroValue(req, res, next) {
   var id = parseInt(req.params.id);
   var sql = `SELECT CAST(COUNT(1) AS BIT) as boolean
