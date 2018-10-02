@@ -317,10 +317,23 @@ function isEmployee(req, res, next) {
 function calculatePrice(email, productID, next, callback) {
   isEmployeeEmail(email, next, (isEmployee) => {
     request.get(stockAPI + 'products/' + productID, (error, response, body) => {
-      let parsed = JSON.parse(body)
-      let product = parsed.data
-      let price = isEmployee ? product.costprice : saleprice
-      callback(product, price)
+      let err = false
+      if (response.statusCode == 404) {
+        err = {
+          'status': 'resource not found',
+          'data': {
+            'product': productID,
+            'email': email
+          },
+          'message': 'product not found'
+        }
+        callback(err)
+      } else {
+        let parsed = JSON.parse(body)
+        let product = parsed.data
+        let price = isEmployee ? product.costprice : saleprice
+        callback(err, product, price)
+      }
     })
   })
 }
@@ -328,17 +341,20 @@ function calculatePrice(email, productID, next, callback) {
 function priceFor(req, res, next) {
   let email = req.params.email
   let productID = req.params.product
-
-  calculatePrice(email, productID, next, (product, price) => {
-    res.status(200).json({
-      'status': 'success',
-      'data': {
-        'price': price,
-        'product': product,
-        'email': email
-      },
-      'message': 'final price for product ' + product.name + ' is ' + price + ' for client ' + email
-    })
+  calculatePrice(email, productID, next, (error, product, price) => {
+    if (error) {
+      res.status(404).json(error)
+    } else {
+      res.status(200).json({
+        'status': 'success',
+        'data': {
+          'price': price,
+          'product': product,
+          'email': email
+        },
+        'message': 'final price for product ' + product.name + ' is ' + price + ' for client ' + email
+      })
+    }
   })
 }
 
