@@ -16,8 +16,6 @@ var db = pgp({
 
 // Query functions ---------------------------------------------------------------------------------------
 
-
-
 /* 
 Simpler url: http://localhost:3000/api/products
 
@@ -35,55 +33,29 @@ Pretending to pagiante sending only limit: http://localhost:3000/api/products?pa
 Visit the following link when trying to encode url --> http://www.december.com/html/spec/esccodes.html
 */
 
-function getAllProductsV2(req, res, next) {
-
+function getAllProducts(req, res, next) {
   var sql = 'SELECT * FROM products';
   var sort = req.query.sort;
   var filter = req.query.filter;
   var pagination = req.query.pagination;
-
-  // let's filter
-  if (filter){ 
-    sql += ` WHERE`;
-    filter = JSON.parse(filter);
-    filter.forEach(f => {
-      sql += ` ${f.field} ${f.operator} '${f.value}' AND`;
-    });
-    sql = sql.substring(0, sql.length -3);
-    console.log(sql);
-  }
-
-
-  // let's sort
-  if (sort){ 
-    sql += ` ORDER BY`;
-    sort = JSON.parse(sort);
-    sort.forEach(s => {
-      sql += ` ${s.field}  ${s.mode},`;
-    });
-    sql = sql.substring(0, sql.length -1);
-    console.log(sql);
-  }
-
-  // let's do some pagination
-  if (pagination){ 
+  var paginationData;
+  
+  sql += filter ? filteringQuery(filter) : '';
+  sql += sort ? sortingQuery(sort) : '';
+  if (pagination){
     pagination = JSON.parse(pagination);
-    pagination.offset = pagination.offset || 0;
-    sql += ` LIMIT ${pagination.limit} OFFSET ${pagination.offset}`;
-    console.log(sql);
-    var paginationData = {
-          next: `pagination={%22offset%22:${pagination.offset + pagination.limit},%22limit%22:${pagination.limit}}`, 
-          self: `pagination={%22offset%22:${pagination.offset},%22limit%22:${pagination.limit}}`,
-          prev: pagination.offset != 0 ? `pagination={%22offset%22:${pagination.offset - pagination.limit},%22limit%22:${pagination.limit}}` : null,
-    }
+    var paginationResult = paginationQuery(pagination);
+    paginationData = paginationResult.paginationData;
+    sql += paginationResult.query;
   }
 
+  console.log(sql);
+  
   // query the db
   db.any(sql)
     .then(function (data) {
       if (pagination) {
         var hasNext = (Object.keys(data).length == pagination.limit);
-        console.log(hasNext);
         paginationData.next = hasNext ? paginationData.next : null;
       };
       res.status(200)
@@ -97,6 +69,50 @@ function getAllProductsV2(req, res, next) {
     .catch(function (err) {
       return next(err);
     });
+}
+
+
+
+
+// let's filter
+function filteringQuery(filter){
+  var query = ` WHERE`;
+  filter = JSON.parse(filter);
+  filter.forEach(f => {
+    query += ` ${f.field} ${f.operator} '${f.value}' AND`;
+  });
+  query = query.substring(0, query.length -3);
+  return query;
+}
+
+
+
+
+// let's sort
+function sortingQuery(sort){
+  var query = ` ORDER BY`;
+  sort = JSON.parse(sort);
+  sort.forEach(s => {
+    query += ` ${s.field}  ${s.mode},`;
+  });
+  query = query.substring(0, query.length -1);
+  return query;
+}
+
+
+
+
+// let's do some pagination
+function paginationQuery(pagination){
+  pagination.offset = pagination.offset || 0;
+  var query = ` LIMIT ${pagination.limit} OFFSET ${pagination.offset}`;
+  var paginationData = {
+        next: `pagination={%22offset%22:${pagination.offset + pagination.limit},%22limit%22:${pagination.limit}}`, 
+        self: `pagination={%22offset%22:${pagination.offset},%22limit%22:${pagination.limit}}`,
+        prev: pagination.offset != 0 ? `pagination={%22offset%22:${pagination.offset - pagination.limit},%22limit%22:${pagination.limit}}` : null,
+  };
+  var result = { query: query, paginationData: paginationData};
+  return result
 }
 
 
@@ -178,7 +194,7 @@ function getSingleProductIsElectroValue(req, res, next) {
 
 
 module.exports = {
-  getAllProductsV2: getAllProductsV2,
+  getAllProducts: getAllProducts,
   getSingleProduct: getSingleProduct,
   getSingleProductMarginInfo: getSingleProductMarginInfo,
   getSingleProductIsElectroValue: getSingleProductIsElectroValue,
