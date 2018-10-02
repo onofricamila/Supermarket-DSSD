@@ -135,9 +135,9 @@ function getAllEmployees(req, res, next) {
       response.status = 'resource not found'
       response.data = data
       response.configuration = {
-        filter: filter,
-        sort: sort,
-        pagination: pagination
+        filter: filter ? JSON.parse(filter) : '',
+        sort: sort ? JSON.parse(sort) : '',
+        pagination: pagination ? JSON.parse(pagination) : ''
       }
       response.message = 'No employees found with current configuration'
     }
