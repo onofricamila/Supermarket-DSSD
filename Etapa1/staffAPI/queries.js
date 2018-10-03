@@ -331,7 +331,7 @@ function calculatePrice(email, productID, next, callback) {
       } else {
         let parsed = JSON.parse(body)
         let product = parsed.data
-        let price = isEmployee ? product.costprice : saleprice
+        let price = isEmployee ? product.costprice : product.saleprice
         callback(err, product, price)
       }
     })
