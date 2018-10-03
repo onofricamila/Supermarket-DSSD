@@ -361,15 +361,15 @@ function priceFor(req, res, next) {
 module.exports = {
   getAllEmployees: getAllEmployees,
   getSingleEmployee: getSingleEmployee,
-  createEmployee: createEmployee,
-  updateEmployee: updateEmployee,
-  removeEmployee: removeEmployee,
+//  createEmployee: createEmployee,
+//  updateEmployee: updateEmployee,
+//  removeEmployee: removeEmployee,
 
-  getAllEmployeeTypes: getAllEmployeeTypes,
-  getSingleEmployeeType: getSingleEmployeeType,
-  createEmployeeType: createEmployeeType,
-  updateEmployeeType: updateEmployeeType,
-  removeEmployeeType: removeEmployeeType,
+//  getAllEmployeeTypes: getAllEmployeeTypes,
+//  getSingleEmployeeType: getSingleEmployeeType,
+//  createEmployeeType: createEmployeeType,
+//  updateEmployeeType: updateEmployeeType,
+//  removeEmployeeType: removeEmployeeType,
 
   isEmployee: isEmployee,
   priceFor: priceFor
