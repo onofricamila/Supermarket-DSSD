@@ -18,5 +18,6 @@ const productsList = props => (
     </div>
 );
 
+// Falta la paginacion
 
 export default productsList;
