@@ -8,6 +8,7 @@
     box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.75);
     border-radius: 1%;
     margin: 20px;
+    border: 1px solid;
 }
 
 .product-buy {
@@ -19,7 +20,7 @@
     border-radius: .25em;
     border: none;
     padding: .6em 1.2em;
-    background-color: #f82f53;
+    background-color: #0277BD;
     color: #fff;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -30,13 +31,16 @@
     float: right;
 }
 
+.product-buy:hover{
+    background: #01579B;
+}
+
 .product-price {
     float: left;
     padding-top: 5px;
     font-family: "Arial";
     font-size: 25px;
     letter-spacing: -1.4px;
-    font-weight: 700;
     text-decoration: none;
     font-style: normal;
     font-variant: normal;
