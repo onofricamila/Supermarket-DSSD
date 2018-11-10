@@ -29,9 +29,13 @@
 }
 
 @media screen and (max-width: 600px) {
-  .footer-github, .footer-project-name{
+  .footer-project-name, .footer-github{
     margin: 0px;
     display: block;
     text-align: center;
+  }
+
+  .footer-github{
+    margin-top: 10px;
   }
 }
