@@ -1,0 +1,29 @@
+.footer {
+  width: '100%';
+  bottom: 0;
+  left: 0;
+  background-color: #222;
+  padding: 20px 0;
+  color: #fff;
+}
+
+.footer-github-img {
+  height: 30px;
+  width: 30px;
+  margin-right: 10px;
+}
+
+.footer-github-link {
+  text-decoration: none !important;
+  color: #fff !important;
+}
+
+.footer-project-name{
+  display: inline;
+  margin-right: 200px;
+}
+
+.footer-github{
+  display: inline;
+  margin-left: 200px;
+}
