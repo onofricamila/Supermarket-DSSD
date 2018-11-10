@@ -20,10 +20,18 @@
 
 .footer-project-name{
   display: inline;
-  margin-right: 200px;
+  margin-right: 10%;
 }
 
 .footer-github{
   display: inline;
-  margin-left: 200px;
+  margin-left: 10%;
+}
+
+@media screen and (max-width: 600px) {
+  .footer-github, .footer-project-name{
+    margin: 0px;
+    display: block;
+    text-align: center;
+  }
 }

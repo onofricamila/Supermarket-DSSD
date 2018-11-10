@@ -57,13 +57,13 @@
 }
 
 @media screen and (max-width: 600px) {
-  .topnav .search-container {
+  .topnav .search-container, .topnav .header-supermarket-name, .topnav .header-login {
     float: none;
   }
-  .topnav a, .topnav input[type=text], .topnav .search-container button {
+  .topnav .header-supermarket-name, .topnav .header-login, .topnav input[type=text], .topnav .search-container button {
     float: none;
     display: block;
-    text-align: left;
+    text-align: center;
     width: 100%;
     margin: 0;
     padding: 14px;

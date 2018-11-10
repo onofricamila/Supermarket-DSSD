@@ -4,10 +4,10 @@ import './header.css';
 const header = props => (
     <div className="topnav">
         <a href="#home" className="header-supermarket-name">Supermarket - DSSD</a>
-        <div class="search-container">
+        <div className="search-container">
             <form action="/action_page.php">
-                <input type="text" placeholder="Search.." name="search"/>
-                <button type="submit"><i class="fa fa-search"></i></button>
+                <input type="text" placeholder="Buscar..." name="search"/>
+                <button type="submit"><i className="fa fa-search"></i></button>
             </form>
         </div>
         <div className="header-login">
