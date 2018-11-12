@@ -1,3 +1,8 @@
-.products-list{
+.products-list-container{
     background: #fff;
+}
+
+.nextButton{
+    margin-top: 30px;
+    margin-bottom: 30px;
 }

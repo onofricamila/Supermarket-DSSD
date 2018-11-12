@@ -4,14 +4,14 @@ import './product.css';
 const product = props => (
     <div className="product-container">
         <h4 className="product-name">
-            Nombre del producto
+            {props.name}
         </h4>
         <p className="product-type">
-            Tipo de producto
+            {props.type}
         </p>
-        <div class="product-price-button">
+        <div className="product-price-button">
             <h3 className="product-price">
-                $ 2000
+                $ {props.price}
             </h3>
             <button type="button" className="product-buy">
                 <span>Comprar</span>

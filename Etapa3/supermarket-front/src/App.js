@@ -11,7 +11,7 @@ class App extends Component {
       <div className="App">
         <Header />
         <Login />
-        <ProductList />
+        <ProductList nextButtonActived={true} products={[{name: "queso", type: "lacteo", price: 300}, {name: "ventilador", type: "frio", price: 200}, {name: "db", type: "anime", price: 100}]} />
         <Footer />
       </div>
     );
