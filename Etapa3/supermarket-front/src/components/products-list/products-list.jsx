@@ -38,9 +38,7 @@ function renderProductsContainer(products, nextButtonActived) {
 
 function renderErrorMessage() {
     return (
-        <div className="alert alert-danger" role="alert" key="errorMessage">
-            No hay productos para mostrar
-        </div>
+            "No hay productos para mostrar"
     )
 }
 
