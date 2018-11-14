@@ -15,7 +15,8 @@ class Login extends Component {
         credentials: {
             email:'',
             password:'',
-        }
+        },
+        msj:'Ingresa tus credenciales!'
       }
     }
 
@@ -29,13 +30,23 @@ class Login extends Component {
 
     submit = () => {
         if (!this.canSubmit()) return false
-
-        let credentials = this.state.credentials
-        // axios.get('http://localhost:3000/api/employees?filter=[{%22field%22:%22email%22,%22value%22:%22pedroperez@gmail.com%22},{%22field%22:%22password%22,%22value%22:%22pedroperez123%22}]', credentials)
         
+        var self = this;
+        let credentials = this.state.credentials
+        axios.get(`http://localhost:3000/api/employees?filter=[{"field":"email","value":"${credentials.email}"},{"field":"password","value":"${credentials.password}"}]`)
+          .then(function (response) {
+            console.log(response);
+          })
+          .catch(function (error) {
+            console.log(error);
+            self.setState({
+                credentials: credentials,
+                msj: 'Malas credenciales!'
+            })
+          });
 
 
-        this.props.onLogin()
+        //this.props.onLogin()
         // aca seteaba redirec true
     }
     
@@ -57,6 +68,7 @@ class Login extends Component {
             <AuthContext.Consumer>
                 {auth => auth ? "Ya estas logueado!" :  <div className="login-page">
                     <div className="form">
+                        <p>{this.state.msj}</p>
                         <Form className="login-form">
                             <Input type="text" placeholder="Correo electrónico"  onChange={this.handleChange('email')}/>
                             <Input type="password" placeholder="Contraseña" onChange={this.handleChange('password')} />
