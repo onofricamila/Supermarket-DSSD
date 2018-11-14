@@ -15,12 +15,16 @@ class Login extends Component {
             password:'',
         },
         msj:'Ingresa tus credenciales!',
-        redirect: false
+        redirect: false,
       }
     }
 
     canSubmit(){
-        let credentials = this.state.credentials
+       let credentials = this.state.credentials
+       return (this.filledFields(credentials) && this.validEmail(credentials))
+    }
+
+    filledFields(credentials){
         if (credentials.email == '' || credentials.password == '') {
             this.setState({
                 credentials: credentials,
@@ -30,6 +34,19 @@ class Login extends Component {
             return false
         } 
         return true
+    }
+
+    validEmail(credentials){
+        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if (re.test(String(credentials.email).toLowerCase())){
+            return true
+        }
+        this.setState({
+            credentials: credentials,
+            msj: 'Debes ingresar un mail valido!',
+            redirect: false
+        })
+        return false
     }
 
     submit = () => {
