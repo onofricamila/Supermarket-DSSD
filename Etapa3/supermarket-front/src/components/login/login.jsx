@@ -1,5 +1,3 @@
-// TODO no redireccionaba cuando te logueabas ... hice eso de toggle state redirect
-
 import React, {Component} from 'react';
 import './login.css';
 import {AuthContext} from '../../App'
@@ -16,13 +14,19 @@ class Login extends Component {
             email:'',
             password:'',
         },
-        msj:'Ingresa tus credenciales!'
+        msj:'Ingresa tus credenciales!',
+        redirect: false
       }
     }
 
     canSubmit(){
         let credentials = this.state.credentials
         if (credentials.email == '' || credentials.password == '') {
+            this.setState({
+                credentials: credentials,
+                msj: 'Debes completar los campos!',
+                redirect: false
+            })
             return false
         } 
         return true
@@ -36,18 +40,22 @@ class Login extends Component {
         axios.get(`http://localhost:3000/api/employees?filter=[{"field":"email","value":"${credentials.email}"},{"field":"password","value":"${credentials.password}"}]`)
           .then(function (response) {
             console.log(response);
+            if (response.data =! null) {
+                self.setState({
+                    redirect: true
+                })
+                self.props.onLogin()
+            }
           })
           .catch(function (error) {
             console.log(error);
             self.setState({
                 credentials: credentials,
-                msj: 'Malas credenciales!'
+                msj: 'Malas credenciales!',
+                redirect: false
             })
-          });
-
-
-        //this.props.onLogin()
-        // aca seteaba redirec true
+          })  
+            
     }
     
     handleChange = name => event => {
@@ -63,8 +71,9 @@ class Login extends Component {
     }
 
     render() {
+        if (this.state.redirect == true)  return (<Redirect to='/' />) 
+      
         return (
-            // aca hacia un if state redirec true entonces return Redicrect push to /
             <AuthContext.Consumer>
                 {auth => auth ? "Ya estas logueado!" :  <div className="login-page">
                     <div className="form">
@@ -81,7 +90,5 @@ class Login extends Component {
         );
     }
 }
-
-// https://codepen.io/colorlib/pen/rxddKy
 
 export default Login;
