@@ -1,0 +1,3 @@
+[submodule "DSSD-Sales"]
+	path = DSSD-Sales
+	url = https://github.com/SebaRaimondi/DSSD-Sales.git
