@@ -21,12 +21,6 @@ class Header extends Component {
         return (
             <div className="topnav">
                 <NavLink to={inicio.path} className="header-supermarket-name">Supermarket - DSSD</NavLink>
-                <div className="search-container">
-                    <form action="/action_page.php">
-                        <input type="text" placeholder="Buscar..." name="search"/>
-                        <button type="submit"><i className="fa fa-search"></i></button>
-                    </form>
-                </div>
                 <div className="header-login">
                 <AuthContext.Consumer>
                     {auth => auth ?  <Button outline color="secondary" onClick={this.props.onLogout}>Logout</Button> :  <NavLink to={login.path} className="header-login-link">

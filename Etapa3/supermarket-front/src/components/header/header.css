@@ -1,74 +1,44 @@
 .topnav {
-  overflow: hidden;
-  background-color: #fff;
+  overflow: hidden;    
+  background-color: #222
 }
 
-.header-supermarket-name, .header-login{
-    float: left;
-    display: block;
-    color: black;
-    text-align: center;
-    padding: 14px 16px;
-    font-size: 17px;
-}
-
-.header-supermarket-name{
-    float: left;
-}
-
-.header-login{
-    float: right;
-}
-
-.header-supermarket-name, .header-login-link{
-    text-decoration: none !important;
-    color: black !important;
-}
-
-.header-login-icon{
-    height: 30px;
-    width: 30px;
-    margin-right: 10px;
-}
-
-.topnav .search-container {
-  display: inline-block;
-}
-
-.topnav input[type=text] {
-  padding: 6px;
-  margin-top: 8px;
+.header-supermarket-name, .header-login {
+  float: left;
+  display: block;
+  text-align: center;
+  padding: 14px 16px;
   font-size: 17px;
-  border: solid 1px;
 }
 
-.topnav .search-container button {
-  display: inline;
-  padding: 6px 10px;
-  margin-right: 16px;
-  background: #ddd;
-  font-size: 17px;
-  border: solid 1px;
-  cursor: pointer;
+.header-supermarket-name {
+  float: left;
+  margin-left: 50px;
 }
 
-.topnav .search-container button:hover {
-  background: #ccc;
+.header-login {
+  float: right;
+  margin-right: 50px;
+}
+
+.header-supermarket-name, .header-login-link {
+  text-decoration: none !important;
+  color: #fff !important;
+}
+
+.header-login-icon {
+  height: 30px;
+  width: 30px;
+  margin-right: 10px;
 }
 
 @media screen and (max-width: 600px) {
-  .topnav .search-container, .topnav .header-supermarket-name, .topnav .header-login {
-    float: none;
+  .topnav .header-supermarket-name {
+    display: none;
   }
-  .topnav .header-supermarket-name, .topnav .header-login, .topnav input[type=text], .topnav .search-container button {
-    float: none;
-    display: block;
+  .topnav .header-login {
     text-align: center;
     width: 100%;
     margin: 0;
-    padding: 14px;
-  }
-  .topnav input[type=text] {
-    border: 1px solid #ccc;  
   }
 }

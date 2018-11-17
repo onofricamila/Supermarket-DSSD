@@ -2,14 +2,9 @@
 
 .login-page {
   width: 100%;
-  height: -webkit-fill-available;
-  padding: 8% 0 0;
+  height: 100%;
+  padding: 4% 0 0;
   margin: auto;
-  background: #0277BD;
-  background: -webkit-linear-gradient(right, #0277BD, #8DC26F);
-  background: -moz-linear-gradient(right, #0277BD, #8DC26F);
-  background: -o-linear-gradient(right, #0277BD, #8DC26F);
-  background: linear-gradient(to left, #0277BD, #8DC26F);
   font-family: "Roboto", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
