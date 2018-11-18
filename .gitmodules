@@ -4,3 +4,6 @@
 [submodule "DSSD-Backend"]
 	path = DSSD-Backend
 	url = https://github.com/SebaRaimondi/DSSD-Backend.git
+[submodule "DSSD-coupons"]
+	path = DSSD-coupons
+	url = https://github.com/FrancoLiptak/DSSD-coupons.git
