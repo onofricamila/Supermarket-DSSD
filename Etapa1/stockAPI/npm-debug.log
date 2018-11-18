@@ -1,32 +1,32 @@
 0 info it worked if it ends with ok
 1 verbose cli [ '/usr/bin/node', '/usr/bin/npm', 'start' ]
 2 info using npm@3.5.2
-3 info using node@v8.10.0
+3 info using node@v6.11.4
 4 verbose run-script [ 'prestart', 'start', 'poststart' ]
 5 info lifecycle stockapi@0.0.0~prestart: stockapi@0.0.0
 6 silly lifecycle stockapi@0.0.0~prestart: no script for prestart, continuing
 7 info lifecycle stockapi@0.0.0~start: stockapi@0.0.0
 8 verbose lifecycle stockapi@0.0.0~start: unsafe-perm in lifecycle true
-9 verbose lifecycle stockapi@0.0.0~start: PATH: /usr/share/npm/bin/node-gyp-bin:/home/camila/Documents/Supermarket-DSSD/Etapa1/stockAPI/node_modules/.bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/usr/lib/jvm/java-8-oracle/bin:/usr/lib/jvm/java-8-oracle/db/bin:/usr/lib/jvm/java-8-oracle/jre/bin
-10 verbose lifecycle stockapi@0.0.0~start: CWD: /home/camila/Documents/Supermarket-DSSD/Etapa1/stockAPI
+9 verbose lifecycle stockapi@0.0.0~start: PATH: /usr/share/npm/bin/node-gyp-bin:/home/fran/projects/Supermarket-DSSD/Etapa1/stockAPI/node_modules/.bin:/home/fran/.rbenv/shims:/home/fran/.rbenv/bin:/home/fran/.rbenv/bin:/usr/local/openmpi/bin:/home/fran/.rvm/gems/ruby-2.5.1/bin:/home/fran/.rvm/gems/ruby-2.5.1@global/bin:/home/fran/.rvm/rubies/ruby-2.5.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/usr/lib/jvm/java-8-oracle/bin:/usr/lib/jvm/java-8-oracle/db/bin:/usr/lib/jvm/java-8-oracle/jre/bin:/home/fran/.rvm/bin:/home/fran/.rvm/bin:/home/fran/.rvm/bin
+10 verbose lifecycle stockapi@0.0.0~start: CWD: /home/fran/projects/Supermarket-DSSD/Etapa1/stockAPI
 11 silly lifecycle stockapi@0.0.0~start: Args: [ '-c', 'node ./bin/www' ]
 12 silly lifecycle stockapi@0.0.0~start: Returned: code: 1  signal: null
 13 info lifecycle stockapi@0.0.0~start: Failed to exec start script
 14 verbose stack Error: stockapi@0.0.0 start: `node ./bin/www`
 14 verbose stack Exit status 1
 14 verbose stack     at EventEmitter.<anonymous> (/usr/share/npm/lib/utils/lifecycle.js:232:16)
-14 verbose stack     at emitTwo (events.js:126:13)
-14 verbose stack     at EventEmitter.emit (events.js:214:7)
+14 verbose stack     at emitTwo (events.js:106:13)
+14 verbose stack     at EventEmitter.emit (events.js:191:7)
 14 verbose stack     at ChildProcess.<anonymous> (/usr/share/npm/lib/utils/spawn.js:24:14)
-14 verbose stack     at emitTwo (events.js:126:13)
-14 verbose stack     at ChildProcess.emit (events.js:214:7)
-14 verbose stack     at maybeClose (internal/child_process.js:925:16)
-14 verbose stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:209:5)
+14 verbose stack     at emitTwo (events.js:106:13)
+14 verbose stack     at ChildProcess.emit (events.js:191:7)
+14 verbose stack     at maybeClose (internal/child_process.js:920:16)
+14 verbose stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:230:5)
 15 verbose pkgid stockapi@0.0.0
-16 verbose cwd /home/camila/Documents/Supermarket-DSSD/Etapa1/stockAPI
-17 error Linux 4.15.0-34-generic
+16 verbose cwd /home/fran/projects/Supermarket-DSSD/Etapa1/stockAPI
+17 error Linux 4.13.0-46-generic
 18 error argv "/usr/bin/node" "/usr/bin/npm" "start"
-19 error node v8.10.0
+19 error node v6.11.4
 20 error npm  v3.5.2
 21 error code ELIFECYCLE
 22 error stockapi@0.0.0 start: `node ./bin/www`

@@ -7,12 +7,12 @@ var options = {
 
 var pgp = require('pg-promise')(options);
 var db = pgp({
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    database: process.env.DB_NAME,
-    user: process.env.DB_USER,       
-    password: process.env.DB_PASS      
-}); 
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  database: process.env.DB_NAME,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS
+});
 
 // Query functions ---------------------------------------------------------------------------------------
 
@@ -39,10 +39,10 @@ function getAllProducts(req, res, next) {
   var filter = req.query.filter;
   var pagination = req.query.pagination;
   var paginationData;
-  
+
   sql += filter ? filteringQuery(filter) : '';
   sql += sort ? sortingQuery(sort) : '';
-  if (pagination){
+  if (pagination) {
     pagination = JSON.parse(pagination);
     var paginationResult = paginationQuery(pagination);
     paginationData = paginationResult.paginationData;
@@ -50,7 +50,7 @@ function getAllProducts(req, res, next) {
   }
 
   console.log(sql);
-  
+
   // query the db
   db.any(sql)
     .then(function (data) {
@@ -70,7 +70,7 @@ function getAllProducts(req, res, next) {
           paginationData: paginationData || null
         };
       }
-      else{
+      else {
         code = 404;
         response = {
           status: 'resource not found',
@@ -85,19 +85,59 @@ function getAllProducts(req, res, next) {
     .catch(function (err) {
       return next(err);
     });
+}
+
+function writeData(sql, value, callback) {
+  db.result(sql, value)
+    .then(
+      (data) => {
+        callback(data);
+      }
+    )
+    .catch(
+      (err) => {
+        callback(err);
+      }
+    )
+}
+
+function createResponse(data, res, actionName) {
+  let responseCode = 500;
+  let response = {};
+  if (data.name == 'error' || data.rowCount == 0) {
+    responseCode = 400;
+    response = {
+      status: 'error',
+      message: 'Bad Request'
+    }
+  } else {
+    responseCode = 200;
+    response = {
+      status: 'success',
+      message: `${actionName} one coupon`
+    }
   }
+  res.status(responseCode).json(response);
+}
 
-
+function updateProduct(req, res, next) {
+  const sql = 'UPDATE products SET name=$1, costPrice=$2, salePrice=$3, productType=$4, stock=$5 where id=$6';
+  const value = 
+    [req.body.name, parseInt(req.body.costPrice), parseInt(req.body.salePrice), parseInt(req.body.productType), parseInt(req.body.stock), parseInt(req.params.id)];
+  writeData(sql, value, (data) => {
+    createResponse(data, res, 'updated');
+  })
+}
 
 
 // let's filter
-function filteringQuery(filter){
+function filteringQuery(filter) {
   var query = ` WHERE`;
   filter = JSON.parse(filter);
   filter.forEach(f => {
     query += ` ${f.field} ${f.operator} '${f.value}' AND`;
   });
-  query = query.substring(0, query.length -3);
+  query = query.substring(0, query.length - 3);
   return query;
 }
 
@@ -105,13 +145,13 @@ function filteringQuery(filter){
 
 
 // let's sort
-function sortingQuery(sort){
+function sortingQuery(sort) {
   var query = ` ORDER BY`;
   sort = JSON.parse(sort);
   sort.forEach(s => {
     query += ` ${s.field}  ${s.mode},`;
   });
-  query = query.substring(0, query.length -1);
+  query = query.substring(0, query.length - 1);
   return query;
 }
 
@@ -119,15 +159,15 @@ function sortingQuery(sort){
 
 
 // let's do some pagination
-function paginationQuery(pagination){
+function paginationQuery(pagination) {
   pagination.offset = pagination.offset || 0;
   var query = ` LIMIT ${pagination.limit} OFFSET ${pagination.offset}`;
   var paginationData = {
-        next: `pagination={%22offset%22:${pagination.offset + pagination.limit},%22limit%22:${pagination.limit}}`, 
-        self: `pagination={%22offset%22:${pagination.offset},%22limit%22:${pagination.limit}}`,
-        prev: pagination.offset != 0 ? `pagination={%22offset%22:${pagination.offset - pagination.limit},%22limit%22:${pagination.limit}}` : null,
+    next: `pagination={%22offset%22:${pagination.offset + pagination.limit},%22limit%22:${pagination.limit}}`,
+    self: `pagination={%22offset%22:${pagination.offset},%22limit%22:${pagination.limit}}`,
+    prev: pagination.offset != 0 ? `pagination={%22offset%22:${pagination.offset - pagination.limit},%22limit%22:${pagination.limit}}` : null,
   };
-  var result = { query: query, paginationData: paginationData};
+  var result = { query: query, paginationData: paginationData };
   return result
 }
 
@@ -142,7 +182,7 @@ function getSingleProduct(req, res, next) {
       let code = 500;
       let response;
 
-      if (data.length){
+      if (data.length) {
         code = 200;
         response = {
           status: 'success',
@@ -150,7 +190,7 @@ function getSingleProduct(req, res, next) {
           message: `Retrieved ONE product`
         }
       }
-      else{
+      else {
         code = 404;
         response = {
           status: 'resource not found',
@@ -163,7 +203,7 @@ function getSingleProduct(req, res, next) {
     .catch(function (err) {
       return next(err);
     });
-    
+
 }
 
 
@@ -173,7 +213,7 @@ function getSingleProduct(req, res, next) {
 function getSingleProductMarginInfo(req, res, next) {
   var id = parseInt(req.params.id);
   var finalData = {}
-  var salePriceTenPercentSql= `select (salePrice * 0.1) as TenPercentValue from products where id = $1`;
+  var salePriceTenPercentSql = `select (salePrice * 0.1) as TenPercentValue from products where id = $1`;
   var marginSql = `select (salePrice - costprice) as margin from products where id = $1`;
   var marginGt10PercentSql = `SELECT CAST(COUNT(1) AS BIT) as boolean
                               FROM products
@@ -181,16 +221,16 @@ function getSingleProductMarginInfo(req, res, next) {
                                 AND ($2) > (${salePriceTenPercentSql})`;
   db.one(marginSql, id)
     .then(function (data) {
-        finalData.margin = data.margin;
-        db.one(marginGt10PercentSql, [id, finalData.margin])
-          .then(function (data) {
-            finalData.marginGt10PercentValue = data.boolean;
-            res.status(200)
-              .json({
-                status: 'success',
-                data: finalData,
-                message: `Retrieving product margin and [1 | 0] representing the fact of product margin surpassing product sale price 10 percent or not (boolean)`
-              });
+      finalData.margin = data.margin;
+      db.one(marginGt10PercentSql, [id, finalData.margin])
+        .then(function (data) {
+          finalData.marginGt10PercentValue = data.boolean;
+          res.status(200)
+            .json({
+              status: 'success',
+              data: finalData,
+              message: `Retrieving product margin and [1 | 0] representing the fact of product margin surpassing product sale price 10 percent or not (boolean)`
+            });
         })
     })
     .catch(function (err) {
@@ -228,6 +268,7 @@ module.exports = {
   getSingleProduct: getSingleProduct,
   getSingleProductMarginInfo: getSingleProductMarginInfo,
   getSingleProductIsElectroValue: getSingleProductIsElectroValue,
+  updateProduct: updateProduct
 };
 
 

@@ -10,6 +10,7 @@ router.get('/', function(req, res, next) {
 /* products endpoints */
 router.get('/api/products', db.getAllProducts);
 router.get('/api/products/:id', db.getSingleProduct);
+router.put('/api/products/:id', db.updateProduct);
 router.get('/api/products/:id/marginInfo', db.getSingleProductMarginInfo);
 router.get('/api/products/:id/isElectroValue', db.getSingleProductIsElectroValue);
 

@@ -15,7 +15,8 @@ CREATE TABLE products (
   name VARCHAR(100) NOT NULL,
   costPrice INT NOT NULL,
   salePrice INT NOT NULL,
-  productType INT NOT NULL REFERENCES productTypes (id)
+  productType INT NOT NULL REFERENCES productTypes (id),
+  stock INT NOT NULL
 );
 
 -- User
@@ -45,13 +46,13 @@ INSERT INTO productTypes (initials, description)
          ('snk', 'snacks'),
          ('elc', 'electro');
 
-INSERT INTO products (name, costPrice, salePrice, productType)
-  VALUES ('toddy', 10, 10, 1),
-         ('oreo', 5, 10, 1),
-         ('opera', 3, 10, 1),
-         ('cheetos', 5, 15, 5),
-         ('doritos', 5, 15, 5),
-         ('tv', 5, 20, 6),
-         ('monitor', 5, 20, 6);
+INSERT INTO products (name, costPrice, salePrice, productType, stock)
+  VALUES ('toddy', 10, 10, 1, 10),
+         ('oreo', 5, 10, 1, 18),
+         ('opera', 3, 10, 1, 2),
+         ('cheetos', 5, 15, 5, 1),
+         ('doritos', 5, 15, 5, 90),
+         ('tv', 5, 20, 6, 2),
+         ('monitor', 5, 20, 6, 5);
 
 
