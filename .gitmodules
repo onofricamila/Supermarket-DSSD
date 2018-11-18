@@ -1,3 +1,6 @@
 [submodule "DSSD-Sales"]
 	path = DSSD-Sales
 	url = https://github.com/SebaRaimondi/DSSD-Sales.git
+[submodule "DSSD-Backend"]
+	path = DSSD-Backend
+	url = https://github.com/SebaRaimondi/DSSD-Backend.git
