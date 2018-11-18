@@ -114,7 +114,7 @@ function createResponse(data, res, actionName) {
     responseCode = 200;
     response = {
       status: 'success',
-      message: `${actionName} one coupon`
+      message: `${actionName} one Product`
     }
   }
   res.status(responseCode).json(response);
