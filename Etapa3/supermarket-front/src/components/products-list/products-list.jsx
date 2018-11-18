@@ -14,6 +14,10 @@ function renderProductsList(products) {
     return (
         <div className="products-list" key="productList">
             <div className="container">
+                <div className="product-list-title">
+                    <h1>¡Nuestros mejores productos te están esperando!</h1>
+                    <hr />
+                </div>
                 <div className="row products-list-row">
                     {products.map((element, index) => {
                         return renderProduct(element, index);
@@ -33,17 +37,22 @@ function renderNextButton(nextButtonActived) {
 }
 
 function renderProductsContainer(products, nextButtonActived) {
-    return [renderProductsList(products), renderNextButton(nextButtonActived)];
+    // return [renderProductsList(products), renderNextButton(nextButtonActived)];
+    return [renderProductsList(products)]
 }
 
 function renderErrorMessage() {
     return (
-            "No hay productos para mostrar"
+        <div className="products-list-error-message-container">
+            <div className="alert alert-warning products-list-error-message" role="alert">
+                No hay productos para mostrar
+            </div>
+        </div>
     )
 }
 
 function render(props) {
-    if (props.products !== undefined) {
+    if (props.products !== undefined && props.products.length > 0) {
         return renderProductsContainer(props.products, props.nextButtonActived);
     } else {
         return renderErrorMessage();

@@ -2,20 +2,12 @@ import React from 'react';
 import './product.css';
 
 const product = props => (
-    <div className="product-container">
-        <h4 className="product-name">
-            {props.name}
-        </h4>
-        <p className="product-type">
-            {props.type}
-        </p>
-        <div className="product-price-button">
-            <h3 className="product-price">
-                $ {props.price}
-            </h3>
-            <button type="button" className="product-buy">
-                <span>Comprar</span>
-            </button>
+    <div className="card product-container">
+        <div className="card-body">
+            <h3 className="card-title capitalize">{props.name}</h3>
+            <h6 className="card-subtitle mb-2 text-muted capitalize">{props.type}</h6>
+            <p className="card-text product-price-size">$ {props.price}</p>
+            <a href="#" class="btn btn-primary">Comprar</a>
         </div>
     </div>
 );
