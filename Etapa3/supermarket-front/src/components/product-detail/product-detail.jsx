@@ -22,7 +22,7 @@ const productDetail = props => (
                                 <div className="col-sm-12 col-md-6">
                                     <div className="form-group">
                                         <label for="cantidadProductos">Cantidad de productos</label>
-                                        <input type="number" className="form-control" id="cantidadProductos" placeholder="Ingrese la cantidad de productos" required />
+                                        <input type="number" className="form-control" id="cantidadProductos" placeholder="Ingrese la cantidad de productos" required min="1" defaultValue="1"/>
                                     </div>
                                     <div className="form-group">
                                         <label for="cupon">Número de cupón</label>
