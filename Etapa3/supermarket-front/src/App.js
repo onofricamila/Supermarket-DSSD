@@ -17,6 +17,15 @@ class App extends Component {
       products: [
         {name: "queso", type: "lacteo", price: 300}, 
         {name: "ventilador", type: "frio", price: 200}, 
+        {name: "db", type: "anime", price: 100},
+        {name: "queso", type: "lacteo", price: 300}, 
+        {name: "ventilador", type: "frio", price: 200}, 
+        {name: "db", type: "anime", price: 100},
+        {name: "queso", type: "lacteo", price: 300}, 
+        {name: "ventilador", type: "frio", price: 200}, 
+        {name: "db", type: "anime", price: 100},
+        {name: "queso", type: "lacteo", price: 300}, 
+        {name: "ventilador", type: "frio", price: 200}, 
         {name: "db", type: "anime", price: 100}
       ],
       authenticated: false
