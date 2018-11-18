@@ -18,6 +18,12 @@
     margin-top: 20% !important;
 }
 
-.product-list-title{
+.product-list-title-container{
     margin-top: 20px;
+}
+
+@media (max-width: 767px) {
+    .product-list-title{
+        font-size: 20px;
+    }
 }

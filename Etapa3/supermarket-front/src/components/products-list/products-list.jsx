@@ -14,8 +14,8 @@ function renderProductsList(products) {
     return (
         <div className="products-list" key="productList">
             <div className="container">
-                <div className="product-list-title">
-                    <h1>¡Nuestros mejores productos te están esperando!</h1>
+                <div className="product-list-title-container">
+                    <h2 className="product-list-title">¡Nuestros mejores productos te están esperando!</h2>
                     <hr />
                 </div>
                 <div className="row products-list-row">
