@@ -3,6 +3,7 @@ import Footer from '../src/components/footer/footer';
 import Header from '../src/components/header/header';
 import Login from '../src/components/login/login';
 import ProductList from '../src/components/products-list/products-list'
+import ProductDetail from '../src/components/product-detail/product-detail'
 import './App.css';
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import AddPropsToRoute from '../src/hoc/AddPropsToRoute'
@@ -50,6 +51,7 @@ class App extends Component {
               <Route path="/" exact component={AddPropsToRoute(ProductList, { products: this.state.products})}  />
               <Route path="/login" exact component={AddPropsToRoute(Login, { onLogin: this.loginHandler})}/>
             </Switch>
+            <ProductDetail name="queso" type="lacteo" price="300"/>
             <Footer />
           </AuthContext.Provider>
         </BrowserRouter>

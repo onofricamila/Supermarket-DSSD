@@ -12,5 +12,4 @@ const product = props => (
     </div>
 );
 
-
 export default product;
