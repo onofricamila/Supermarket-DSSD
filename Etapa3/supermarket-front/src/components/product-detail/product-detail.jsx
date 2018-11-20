@@ -1,14 +1,16 @@
 import React, {Component} from 'react';
 import './product-detail.css';
 import axios from 'axios'
+import {Button} from 'reactstrap'
 
 class ProductDetail extends Component {
     state = {
         loadedProduct: null,
-        form:{
+        form: {
             cant: 1,
-            couponNumber:''
-        }
+            couponNumber: 0
+        },
+        msj:'¡Terminá tu compra!'
     }
 
     constructor(props){
@@ -20,10 +22,12 @@ class ProductDetail extends Component {
         if (id) {
             axios.get('http://localhost:3010/api/products/' + id)
                 .then(response => {
-                    let currentForm = this.state.form
+                    let currentForm = this.state.form 
+                    let currentMsj = this.state.msj 
                     this.setState({ 
                         form: {...currentForm},
                         loadedProduct: response.data.data,
+                        msj: currentMsj
                     });
                 }).catch(function (error) {
                     console.log(error);
@@ -43,6 +47,55 @@ class ProductDetail extends Component {
         })
     }
 
+    validFields(form){
+        var re = /^[0-9]*$/;
+        if (re.test(form.cant) && re.test(form.couponNumber)){
+            return true
+        }
+
+        let loadedProduct = this.state.loadedProduct
+
+        this.setState({
+            loadedProduct: {...loadedProduct},
+            form: form,
+            msj: 'Debes ingresar números!',
+        })
+        return false
+    }
+
+    canSubmit(){
+        let form = this.state.form
+        console.log(this.validFields(form))
+        return (this.validFields(form))
+    }
+
+    submit = () => {
+        if (!this.canSubmit()) return false
+        
+        var self = this;
+        let form = this.state.form
+        let loadedProduct = this.state.loadedProduct
+        
+       /*  axios.post(`http://localhost:3003/api/employees?filter=[{"field":"email","value":"${credentials.email}"},{"field":"password","value":"${credentials.password}"}]`)
+          .then(function (response) {
+            console.log(response);
+            if (response.data =! null) {
+                self.setState({
+                    redirect: true
+                })
+            }
+          })
+          .catch(function (error) {
+            console.log(error);
+            self.setState({
+                loadedProduct: {...loadedProduct},
+                form: form,
+                msj: 'Algo salio mal :(',
+            })
+          })   */
+            
+    }
+
     render() {
         let product = ""
         if(this.state.loadedProduct){
@@ -51,7 +104,7 @@ class ProductDetail extends Component {
             product = (<div className="container">
             <div className="card text-center">
                 <div className="card-header">
-                    ¡Terminá tu compra!
+                       {this.state.msj}
             </div>
                 <div className="card-body">
                     <div className="row">
@@ -72,11 +125,11 @@ class ProductDetail extends Component {
                                         </div>
                                         <div className="form-group">
                                             <label>Número de cupón</label>
-                                            <input type="Number" onChange={this.handleChange('couponNumber')} className="form-control" id="cupon" placeholder="Ingrese el número de su cupón" value={this.state.form.couponNumber} />
+                                            <input type="Number" onChange={this.handleChange('couponNumber')} min="0" className="form-control" id="cupon" placeholder="Ingrese el número de su cupón" value={this.state.form.couponNumber} />
                                         </div>
                                     </div>
                                     <div className="col-sm-12 col-md-6">
-                                        <button type="submit" className="btn btn-primary buyButton">Comprar</button>
+                                        <Button  onClick={this.submit}>Comprar</Button>
                                     </div>
                                 </div>
                             </form>
