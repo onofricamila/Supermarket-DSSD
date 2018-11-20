@@ -266,14 +266,69 @@ function getSingleProductIsElectroValue(req, res, next) {
     });
 }
 
+function getSingle(next, tableName, id, callback) {
+  db.one(`select * from ${tableName} where id = $1`, id)
+  .then((data) => {
+    callback(data)
+  })
+  .catch((err) => {
+    callback(false);
+  });
+}
 
+function getSingleProductType(req, res, next) {
+  var id = parseInt(req.params.id);
+
+  getSingle(next, 'productTypes', id, (data) => {
+    let response = {}
+    let code = 500
+
+    if (data) {
+      code = 200
+      response.status = 'success'
+      response.data = data
+      response.message = 'Retrieved ONE element from productTypes'
+    } else {
+      code = 404
+      response.status = 'resource not found'
+      response.data = data
+      response.message = 'ProductType not found'
+    }
+
+    res.status(code).json(response);
+  });
+}
+
+function getAll(next, tableName, callback) {
+  db.any(`select * from ${tableName}`)
+  .then((data) => {
+    callback(data)
+  })
+  .catch((err) => {
+    return next(err)
+  })
+}
+
+function getAllProductTypes(req, res, next) {
+  getAll(next, 'productTypes', (data) => {
+    res.status(200)
+    .json({
+      status: 'success',
+      data: data,
+      message: 'Retrieved ALL productTypes'
+    });
+  })
+}
 
 module.exports = {
   getAllProducts: getAllProducts,
   getSingleProduct: getSingleProduct,
   getSingleProductMarginInfo: getSingleProductMarginInfo,
   getSingleProductIsElectroValue: getSingleProductIsElectroValue,
-  updateProduct: updateProduct
+  updateProduct: updateProduct,
+
+  getAllProductTypes: getAllProductTypes,
+  getSingleProductType: getSingleProductType,
 };
 
 
