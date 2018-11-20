@@ -5,6 +5,10 @@ import axios from 'axios'
 class ProductDetail extends Component {
     state = {
         loadedProduct: null,
+        form:{
+            cant: 1,
+            couponNumber:''
+        }
     }
 
     constructor(props){
@@ -13,15 +17,30 @@ class ProductDetail extends Component {
 
     componentWillMount(){
         var id = this.props.match.params.id
-        var self = this
         if (id) {
             axios.get('http://localhost:3010/api/products/' + id)
                 .then(response => {
-                    self.setState({ loadedProduct: response.data.data });
+                    let currentForm = this.state.form
+                    this.setState({ 
+                        form: {...currentForm},
+                        loadedProduct: response.data.data,
+                    });
                 }).catch(function (error) {
                     console.log(error);
                 })  
         }
+    }
+
+    handleChange = name => event => {
+        let currentState = this.state
+        let currentForm = this.state.form
+        this.setState({
+          ...currentState,
+          form: {
+              ...currentForm,
+              [name]: event.target.value,
+          }
+        })
     }
 
     render() {
@@ -49,11 +68,11 @@ class ProductDetail extends Component {
                                     <div className="col-sm-12 col-md-6">
                                         <div className="form-group">
                                             <label>Cantidad de productos</label>
-                                            <input type="number" className="form-control" id="cantidadProductos" placeholder="Ingrese la cantidad de productos" required min="1" defaultValue="1"/>
+                                            <input type="number" onChange={this.handleChange('cant')} className="form-control" id="cantidadProductos" placeholder="Ingrese la cantidad de productos" min="1" value={this.state.form.cant}/>
                                         </div>
                                         <div className="form-group">
                                             <label>Número de cupón</label>
-                                            <input type="Number" className="form-control" id="cupon" placeholder="Ingrese el número de su cupón" />
+                                            <input type="Number" onChange={this.handleChange('couponNumber')} className="form-control" id="cupon" placeholder="Ingrese el número de su cupón" value={this.state.form.couponNumber} />
                                         </div>
                                     </div>
                                     <div className="col-sm-12 col-md-6">
