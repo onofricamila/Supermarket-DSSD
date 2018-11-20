@@ -121,6 +121,11 @@ function createResponse(data, res, actionName) {
 }
 
 function updateProduct(req, res, next) {
+  let stock = parseInt(req.body.stock)
+
+  // Check stock
+  if (!stock || stock < 0) return res.status(500).json({ 'status':'error', 'message':'Not enough stock' });
+
   const sql = 'UPDATE products SET name=$1, costPrice=$2, salePrice=$3, productType=$4, stock=$5 where id=$6';
   const value = 
     [req.body.name, parseInt(req.body.costPrice), parseInt(req.body.salePrice), parseInt(req.body.productType), parseInt(req.body.stock), parseInt(req.params.id)];
