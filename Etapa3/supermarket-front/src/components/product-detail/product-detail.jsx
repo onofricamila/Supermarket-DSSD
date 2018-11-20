@@ -1,9 +1,29 @@
 import React, {Component} from 'react';
 import './product-detail.css';
+import axios from 'axios'
 
 class ProductDetail extends Component {
+    state = {
+        loadedProduct: null,
+    }
+
     constructor(props){
         super(props);
+    }
+
+    componentWillMount(){
+        var id = this.props.match.params.id
+        var self = this
+        if (id) {
+            console.log('http://localhost:3010/api/products/' + id)
+            axios.get('http://localhost:3010/api/products/' + id)
+                .then(response => {
+                    console.log(response.data)
+                    self.setState({ loadedProduct: response.data });
+                }).catch(function (error) {
+                    console.log(error);
+                  })  
+        }
     }
 
     render() {
