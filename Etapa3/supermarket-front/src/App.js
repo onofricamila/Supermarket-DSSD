@@ -19,15 +19,6 @@ class App extends Component {
         {name: "queso", type: "lacteo", price: 300}, 
         {name: "ventilador", type: "frio", price: 200}, 
         {name: "db", type: "anime", price: 100},
-        {name: "queso", type: "lacteo", price: 300}, 
-        {name: "ventilador", type: "frio", price: 200}, 
-        {name: "db", type: "anime", price: 100},
-        {name: "queso", type: "lacteo", price: 300}, 
-        {name: "ventilador", type: "frio", price: 200}, 
-        {name: "db", type: "anime", price: 100},
-        {name: "queso", type: "lacteo", price: 300}, 
-        {name: "ventilador", type: "frio", price: 200}, 
-        {name: "db", type: "anime", price: 100}
       ],
       authenticated: false
     }
@@ -50,8 +41,8 @@ class App extends Component {
             <Switch>
               <Route path="/" exact component={AddPropsToRoute(ProductList, { products: this.state.products})}  />
               <Route path="/login" exact component={AddPropsToRoute(Login, { onLogin: this.loginHandler})}/>
+              <Route path="/buy/:id" exact component={AddPropsToRoute(ProductDetail, { name:"queso", type:"lacteo", price:"300"})} />
             </Switch>
-            <ProductDetail name="queso" type="lacteo" price="300"/>
             <Footer />
           </AuthContext.Provider>
         </BrowserRouter>
