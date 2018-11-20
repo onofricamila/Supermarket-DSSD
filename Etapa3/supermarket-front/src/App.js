@@ -7,6 +7,7 @@ import ProductDetail from '../src/components/product-detail/product-detail'
 import './App.css';
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import AddPropsToRoute from '../src/hoc/AddPropsToRoute'
+import axios from 'axios'
 
 export const AuthContext = React.createContext(false);
 
@@ -15,13 +16,19 @@ class App extends Component {
   constructor(props){
     super(props);
     this.state = {
-      products: [
-        {name: "queso", type: "lacteo", price: 300}, 
-        {name: "ventilador", type: "frio", price: 200}, 
-        {name: "db", type: "anime", price: 100},
-      ],
+      products: [],
       authenticated: false
     }
+  }
+
+  componentWillMount(){
+      axios.get('http://localhost:3010/api/products/')
+          .then(response => {
+              let auth = this.state.authenticated
+              this.setState({ products: response.data.data, authenticated: auth });
+          }).catch(function (error) {
+              console.log(error);
+          })  
   }
 
   loginHandler = () => {

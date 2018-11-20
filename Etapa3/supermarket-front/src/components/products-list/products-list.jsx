@@ -5,7 +5,7 @@ import './products-list.css';
 function renderProduct(aProduct, index) {
     return (
         <div className="col-sm-12 col-md-4" key={"product-" + index}>
-            <Product name={aProduct.name} type={aProduct.type} price={aProduct.price} />
+            <Product product={aProduct} />
         </div>
     )
 }
