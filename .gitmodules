@@ -7,3 +7,6 @@
 [submodule "DSSD-coupons"]
 	path = DSSD-coupons
 	url = https://github.com/FrancoLiptak/DSSD-coupons.git
+[submodule "DSSD-Users"]
+	path = DSSD-Users
+	url = https://github.com/SebaRaimondi/DSSD-Users.git
