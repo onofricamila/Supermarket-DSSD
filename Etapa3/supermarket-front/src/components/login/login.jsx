@@ -54,7 +54,7 @@ class Login extends Component {
         
         var self = this;
         let credentials = this.state.credentials
-        axios.get(`http://localhost:3000/api/employees?filter=[{"field":"email","value":"${credentials.email}"},{"field":"password","value":"${credentials.password}"}]`)
+        axios.get(`http://localhost:3001/api/employees?filter=[{"field":"email","value":"${credentials.email}"},{"field":"password","value":"${credentials.password}"}]`)
           .then(function (response) {
             console.log(response);
             if (response.data =! null) {

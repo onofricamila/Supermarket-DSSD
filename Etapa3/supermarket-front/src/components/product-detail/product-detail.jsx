@@ -20,7 +20,7 @@ class ProductDetail extends Component {
     componentWillMount(){
         var id = this.props.match.params.id
         if (id) {
-            axios.get('http://localhost:3010/api/products/' + id)
+            axios.get('http://localhost:3000/api/products/' + id)
                 .then(response => {
                     let currentForm = this.state.form 
                     let currentMsj = this.state.msj 
