@@ -77,10 +77,78 @@ class ProductDetail extends Component {
         return field.length == 0
     }
 
+    hasOnlyDigits(field){
+        var re = /^[0-9]*$/;
+        return (re.test(field)) 
+    }
+
+    validCoupon(form){
+        let loadedProduct = this.state.loadedProduct
+        if(!this.isEmpty(form.couponNumber)){
+           
+            if(!this.hasOnlyDigits(form.couponNumber)){
+                this.setState({
+                    loadedProduct: {...loadedProduct},
+                    form: form,
+                    msj: '¡Debes ingresar solo números para el campo "Número de cupón"!',
+                })
+                return false
+            }
+
+            var self = this
+            axios.get(`http://localhost:3003/coupon/${form.couponNumber}"}]`)
+            .then(function (response) {
+                console.log(response);
+                if (response.data =! null) {
+                    self.setState({
+                        redirect: true
+                    })
+                    self.props.onLogin()
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+                self.setState({
+                    loadedProduct: {...loadedProduct},
+                    form: form,
+                    msj: '¡Número de cupón inválido!',
+                })               
+                return false
+            })  
+
+        }
+
+        return true
+    }
+
+    validCant(form){
+        let loadedProduct = this.state.loadedProduct
+        if(this.isEmpty(form.cant)){
+            this.setState({
+                loadedProduct: {...loadedProduct},
+                form: form,
+                msj: '¡Debes ingresar la cantidad!',
+            })
+            return false
+        }
+
+        if (!this.hasOnlyDigits(form.cant)){
+            this.setState({
+                loadedProduct: {...loadedProduct},
+                form: form,
+                msj: '¡Debes ingresar solo números en el campo "Cantidad"!',
+            })
+            return false
+        }
+
+        return true
+    }
+
     canSubmit(){
         let form = this.state.form
-        console.log(this.validFields(form))
-        return (this.validFields(form))
+        console.log(this.validCant(form))
+        console.log(this.validCoupon(form))
+        return (this.validCant(form) && this.validCoupon(form))
     }
 
     submit = () => {
