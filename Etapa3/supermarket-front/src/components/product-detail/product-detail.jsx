@@ -2,13 +2,14 @@ import React, {Component} from 'react';
 import './product-detail.css';
 import axios from 'axios'
 import {Button} from 'reactstrap'
+import {AuthContext} from '../../App';
 
 class ProductDetail extends Component {
     state = {
         loadedProduct: null,
         form: {
             cant: 1,
-            couponNumber: 0
+            couponNumber: ''
         },
         msj:'¡Terminá tu compra!'
     }
@@ -50,11 +51,11 @@ class ProductDetail extends Component {
     validFields(form){
         let loadedProduct = this.state.loadedProduct
 
-        if(form.cant.length == 0){
+        if(this.isEmpty(form.cant)){
             this.setState({
                 loadedProduct: {...loadedProduct},
                 form: form,
-                msj: 'Debes ingresar la cantidad!',
+                msj: '¡Debes ingresar la cantidad!',
             })
             return false
         }
@@ -67,9 +68,13 @@ class ProductDetail extends Component {
         this.setState({
             loadedProduct: {...loadedProduct},
             form: form,
-            msj: 'Debes ingresar solo números!',
+            msj: '¡Debes ingresar solo números!',
         })
         return false
+    }
+
+    isEmpty(field){
+        return field.length == 0
     }
 
     canSubmit(){
@@ -91,11 +96,15 @@ class ProductDetail extends Component {
             })
           .then(function (response) {
             console.log(response);
-            if (response.data =! null) {
-                self.setState({
-                    redirect: true
-                })
+            let msj = 'Oops! Algo salio mal'
+            if (response.status == 200) {
+                msj = 'Recibirás el producto en los próximos días :)'
             }
+            self.setState({
+                loadedProduct: {...loadedProduct},
+                form: form,
+                msj: msj,
+            })
           })
           .catch(function (error) {
             console.log(error);
@@ -109,14 +118,14 @@ class ProductDetail extends Component {
     }
 
     render() {
-        let product = ""
+        let show = ""
         if(this.state.loadedProduct){
             var prod = this.state.loadedProduct
 
-            product = (<div className="container">
+            show = (<div className="container">
             <div className="card text-center">
                 <div className="card-header">
-                       {this.state.msj}
+                       Accediste a comprar:
             </div>
                 <div className="card-body">
                     <div className="row">
@@ -135,10 +144,13 @@ class ProductDetail extends Component {
                                             <label>Cantidad:</label>
                                             <input onChange={this.handleChange('cant')} className="form-control" id="cantidadProductos" placeholder="Ingrese la cantidad de productos" value={this.state.form.cant}/>
                                         </div>
-                                        <div className="form-group">
-                                            <label>Número de cupón (opcional): </label>
-                                            <input onChange={this.handleChange('couponNumber')}  className="form-control" id="cupon" placeholder="Ingrese el número de su cupón" value={this.state.form.couponNumber} />
-                                        </div>
+
+                                        <AuthContext.Consumer>
+                                            {auth => auth ? '' : <div className="form-group">
+                                                <label>Número de cupón (opcional): </label>
+                                                <input onChange={this.handleChange('couponNumber')}  className="form-control" id="cupon" placeholder="Ingrese el número de su cupón" value={this.state.form.couponNumber} />
+                                            </div> }
+                                        </AuthContext.Consumer>
                                     </div>
                                     <div className="col-sm-12 col-md-6">
                                         <Button className='buyButton' onClick={this.submit}>Comprar</Button>
@@ -148,7 +160,7 @@ class ProductDetail extends Component {
                         </div>
                     </div>
                     <div className="card-footer text-muted">
-                        Recibirás el producto en los próximos días
+                         {this.state.msj}
                 </div>
                 </div>
             </div>
@@ -157,7 +169,7 @@ class ProductDetail extends Component {
 
     }
     
-    return product;
+    return show;
     
 }
 }

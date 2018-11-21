@@ -14,7 +14,7 @@ class Login extends Component {
             email:'',
             password:'',
         },
-        msj:'Ingresa tus credenciales!',
+        msj:'¡Ingresa tus credenciales!',
         redirect: false,
       }
     }
@@ -28,7 +28,7 @@ class Login extends Component {
         if (credentials.email == '' || credentials.password == '') {
             this.setState({
                 credentials: credentials,
-                msj: 'Debes completar los campos!',
+                msj: '¡Debes completar los campos!',
                 redirect: false
             })
             return false
@@ -43,7 +43,7 @@ class Login extends Component {
         }
         this.setState({
             credentials: credentials,
-            msj: 'Debes ingresar un mail valido!',
+            msj: '¡Debes ingresar un mail valido!',
             redirect: false
         })
         return false
@@ -68,7 +68,7 @@ class Login extends Component {
             console.log(error);
             self.setState({
                 credentials: credentials,
-                msj: 'Malas credenciales!',
+                msj: '¡Malas credenciales!',
                 redirect: false
             })
           })  
@@ -92,7 +92,7 @@ class Login extends Component {
       
         return (
             <AuthContext.Consumer>
-                {auth => auth ? "Ya estas logueado!" :  <div className="login-page">
+                {auth => auth ? "¡Ya estas logueado!" :  <div className="login-page">
                     <div className="form">
                         <p>{this.state.msj}</p>
                         <Form className="login-form">
