@@ -83,42 +83,45 @@ class ProductDetail extends Component {
     }
 
     validCoupon(form){
+        if(this.isEmpty(form.couponNumber)){ return true }
+        
         let loadedProduct = this.state.loadedProduct
-        if(!this.isEmpty(form.couponNumber)){
-           
-            if(!this.hasOnlyDigits(form.couponNumber)){
-                this.setState({
-                    loadedProduct: {...loadedProduct},
-                    form: form,
-                    msj: '¡Debes ingresar solo números para el campo "Número de cupón"!',
-                })
-                return false
-            }
 
-            var self = this
-            axios.get(`http://localhost:3003/coupon/${form.couponNumber}"}]`)
-            .then(function (response) {
-                console.log(response);
-                if (response.data =! null) {
-                    self.setState({
-                        redirect: true
-                    })
-                    self.props.onLogin()
-                }
+        if(!this.hasOnlyDigits(form.couponNumber)){
+            this.setState({
+                loadedProduct: {...loadedProduct},
+                form: form,
+                msj: '¡Debes ingresar solo números para el campo "Número de cupón"!',
             })
-            .catch(function (error) {
-                console.log(error);
+            return false
+        }
+
+        // sabemos se ingresó un numero, veremos si corresponde a un cupon
+        var self = this
+        return axios.get(`http://localhost:3003/coupon/${form.couponNumber}`)
+        .then(function (response) {
+            if(response.data.status == "resource not found"){
                 self.setState({
                     loadedProduct: {...loadedProduct},
                     form: form,
                     msj: '¡Número de cupón inválido!',
-                })               
-                return false
-            })  
-
-        }
-
-        return true
+                }) 
+            }else{
+                self.setState({
+                    loadedProduct: {...loadedProduct},
+                    form: form,
+                    msj: 'Cupon valido',
+                }) 
+            }
+        })
+        .catch(function (error) {
+            console.log(error);
+            self.setState({
+                loadedProduct: {...loadedProduct},
+                form: form,
+                msj: 'Oops, hubo un problema :(',
+            })               
+        })  
     }
 
     validCant(form){
@@ -146,14 +149,14 @@ class ProductDetail extends Component {
 
     canSubmit(){
         let form = this.state.form
-        console.log(this.validCant(form))
-        console.log(this.validCoupon(form))
-        return (this.validCant(form) && this.validCoupon(form))
+        this.validCoupon(form)
+        return (this.validCant(form) && this.state.validCoupon)
     }
 
     submit = () => {
-        if (!this.canSubmit()) return false
-        
+        console.log(this.canSubmit())
+
+       /*  if (!this.canSubmit()) return false
         var self = this;
         let form = this.state.form
         let loadedProduct = this.state.loadedProduct
@@ -181,7 +184,7 @@ class ProductDetail extends Component {
                 form: form,
                 msj: 'Algo salio mal :(',
             })
-          }) 
+          })  */
             
     }
 
