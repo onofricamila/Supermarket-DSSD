@@ -1,6 +1,6 @@
+--DDL
 DROP DATABASE IF EXISTS staff;
 CREATE DATABASE staff;
-
 \c staff;
 
 CREATE TABLE employeeTypes (
@@ -18,6 +18,25 @@ CREATE TABLE employees (
   employeetype INT NOT NULL REFERENCES employeeTypes (id)
 );
 
+-- User
+DO
+$do$
+BEGIN
+   IF NOT EXISTS (
+      SELECT                       
+      FROM   pg_catalog.pg_roles
+      WHERE  rolname = 'grupo1') THEN
+
+      CREATE ROLE grupo1 LOGIN PASSWORD 'topsecret';
+   END IF;
+END
+$do$;
+
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO grupo1;
+GRANT ALL PRIVILEGES ON TABLE employees TO grupo1;
+GRANT ALL PRIVILEGES ON TABLE employeeTypes TO grupo1;
+
+-- DML
 INSERT INTO employeeTypes (initials, description)
   VALUES ('ca', 'cajero'), ('ge', 'gerente'), ('po', 'portero');
 

@@ -1,0 +1,29 @@
+.products-list-container{
+    background: #fff;
+    min-height: -webkit-fill-available;
+    margin-bottom: 50px;
+}
+
+.nextButton{
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.products-list-error-message-container{
+    max-width: 50%;
+    margin: auto;
+}
+
+.products-list-error-message{
+    margin-top: 20% !important;
+}
+
+.product-list-title-container{
+    margin-top: 20px;
+}
+
+@media (max-width: 767px) {
+    .product-list-title{
+        font-size: 20px;
+    }
+}

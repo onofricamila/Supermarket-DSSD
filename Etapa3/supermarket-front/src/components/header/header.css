@@ -1,0 +1,44 @@
+.topnav {
+  overflow: hidden;    
+  background-color: #222
+}
+
+.header-supermarket-name, .header-login {
+  float: left;
+  display: block;
+  text-align: center;
+  padding: 14px 16px;
+  font-size: 17px;
+}
+
+.header-supermarket-name {
+  float: left;
+  margin-left: 50px;
+}
+
+.header-login {
+  float: right;
+  margin-right: 50px;
+}
+
+.header-supermarket-name, .header-login-link {
+  text-decoration: none !important;
+  color: #fff !important;
+}
+
+.header-login-icon {
+  height: 30px;
+  width: 30px;
+  margin-right: 10px;
+}
+
+@media screen and (max-width: 600px) {
+  .topnav .header-supermarket-name {
+    display: none;
+  }
+  .topnav .header-login {
+    text-align: center;
+    width: 100%;
+    margin: 0;
+  }
+}

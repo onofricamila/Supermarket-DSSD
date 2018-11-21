@@ -1,0 +1,20 @@
+.product-detail-data {
+    margin-top: 30px;
+}
+
+.buyButton {
+    margin-top: 70px;
+}
+
+.card-footer {
+    margin-top: 20px;
+}
+
+@media (max-width: 767px) {
+    .product-detail-data {
+        margin-top: 0;
+    }
+    .buyButton {
+        margin-top: 0;
+    }
+}
