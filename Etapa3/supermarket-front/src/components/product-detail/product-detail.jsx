@@ -20,7 +20,7 @@ class ProductDetail extends Component {
     componentWillMount(){
         var id = this.props.match.params.id
         if (id) {
-            axios.get('http://localhost:3000/api/products/' + id)
+            axios.get('http://localhost:3003/products/' + id)
                 .then(response => {
                     let currentForm = this.state.form 
                     let currentMsj = this.state.msj 
@@ -48,17 +48,26 @@ class ProductDetail extends Component {
     }
 
     validFields(form){
+        let loadedProduct = this.state.loadedProduct
+
+        if(form.cant.length == 0){
+            this.setState({
+                loadedProduct: {...loadedProduct},
+                form: form,
+                msj: 'Debes ingresar la cantidad!',
+            })
+            return false
+        }
+
         var re = /^[0-9]*$/;
         if (re.test(form.cant) && re.test(form.couponNumber)){
             return true
         }
 
-        let loadedProduct = this.state.loadedProduct
-
         this.setState({
             loadedProduct: {...loadedProduct},
             form: form,
-            msj: 'Debes ingresar números!',
+            msj: 'Debes ingresar solo números!',
         })
         return false
     }
@@ -76,7 +85,10 @@ class ProductDetail extends Component {
         let form = this.state.form
         let loadedProduct = this.state.loadedProduct
         
-       /*  axios.post(`http://localhost:3003/api/employees?filter=[{"field":"email","value":"${credentials.email}"},{"field":"password","value":"${credentials.password}"}]`)
+       axios.post(`http://localhost:3003/buy`, 
+            { productid: loadedProduct.id,
+            quantity: form.cant
+            })
           .then(function (response) {
             console.log(response);
             if (response.data =! null) {
@@ -92,7 +104,7 @@ class ProductDetail extends Component {
                 form: form,
                 msj: 'Algo salio mal :(',
             })
-          })   */
+          }) 
             
     }
 
@@ -111,8 +123,8 @@ class ProductDetail extends Component {
                         <div className="col-sm-12 col-md-4">
                             <div className="product-detail-data">
                                 <h3 className="card-title capitalize">{prod.name}</h3>
-                                <h6 className="card-subtitle mb-2 text-muted capitalize">{prod.producttype}</h6>
-                                <p className="card-text product-price-size">$ {prod.saleprice}</p>
+                                <h6 className="card-subtitle mb-2 text-muted capitalize">{prod.type.description}</h6>
+                                <p className="card-text product-price-size">$ {Math.round(prod.price * this.state.form.cant * 100)/100}</p>
                             </div>
                         </div>
                         <div className="col-sm-12 col-md-8">
@@ -120,16 +132,16 @@ class ProductDetail extends Component {
                                 <div className="row">
                                     <div className="col-sm-12 col-md-6">
                                         <div className="form-group">
-                                            <label>Cantidad de productos</label>
-                                            <input type="number" onChange={this.handleChange('cant')} className="form-control" id="cantidadProductos" placeholder="Ingrese la cantidad de productos" min="1" value={this.state.form.cant}/>
+                                            <label>Cantidad:</label>
+                                            <input onChange={this.handleChange('cant')} className="form-control" id="cantidadProductos" placeholder="Ingrese la cantidad de productos" value={this.state.form.cant}/>
                                         </div>
                                         <div className="form-group">
-                                            <label>Número de cupón</label>
-                                            <input type="Number" onChange={this.handleChange('couponNumber')} min="0" className="form-control" id="cupon" placeholder="Ingrese el número de su cupón" value={this.state.form.couponNumber} />
+                                            <label>Número de cupón (opcional): </label>
+                                            <input onChange={this.handleChange('couponNumber')}  className="form-control" id="cupon" placeholder="Ingrese el número de su cupón" value={this.state.form.couponNumber} />
                                         </div>
                                     </div>
                                     <div className="col-sm-12 col-md-6">
-                                        <Button  onClick={this.submit}>Comprar</Button>
+                                        <Button className='buyButton' onClick={this.submit}>Comprar</Button>
                                     </div>
                                 </div>
                             </form>

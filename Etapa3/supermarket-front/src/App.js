@@ -22,7 +22,7 @@ class App extends Component {
   }
 
   componentWillMount(){
-      axios.get('http://localhost:3000/api/products/')
+      axios.get('http://localhost:3003/products/all')
           .then(response => {
               let auth = this.state.authenticated
               this.setState({ products: response.data.data, authenticated: auth });
