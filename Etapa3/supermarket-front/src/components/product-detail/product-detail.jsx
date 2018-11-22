@@ -82,11 +82,13 @@ class ProductDetail extends Component {
         return (re.test(field)) 
     }
 
-    validCoupon(form){
+    async validCoupon(form){
+        // esta vacio el campo del cupon, es correcto
         if(this.isEmpty(form.couponNumber)){ return true }
         
         let loadedProduct = this.state.loadedProduct
 
+        // si esta completo el campo y no tiene solo digitos, es incorrecto
         if(!this.hasOnlyDigits(form.couponNumber)){
             this.setState({
                 loadedProduct: {...loadedProduct},
@@ -96,22 +98,27 @@ class ProductDetail extends Component {
             return false
         }
 
-        // sabemos se ingresó un numero, veremos si corresponde a un cupon
+        // sabemos se lleno el campo y se ingresó un numero, veremos si corresponde a un cupon
         var self = this
-        return axios.get(`http://localhost:3003/coupon/${form.couponNumber}`)
+        var action = await axios.get(`http://localhost:3003/coupon/${form.couponNumber}`)
         .then(function (response) {
+            console.log(response)
             if(response.data.status == "resource not found"){
                 self.setState({
                     loadedProduct: {...loadedProduct},
                     form: form,
                     msj: '¡Número de cupón inválido!',
                 }) 
+                // quiero que la funcion retorne false
+                return false
             }else{
                 self.setState({
                     loadedProduct: {...loadedProduct},
                     form: form,
                     msj: 'Cupon valido',
                 }) 
+                // quiero que la funcion retorne true
+                return true
             }
         })
         .catch(function (error) {
@@ -120,8 +127,13 @@ class ProductDetail extends Component {
                 loadedProduct: {...loadedProduct},
                 form: form,
                 msj: 'Oops, hubo un problema :(',
-            })               
-        })  
+            })      
+            // aca podria retornar false
+            return false
+        }) 
+        
+        console.log('lo de axios ' + action)
+        return action
     }
 
     validCant(form){
@@ -147,15 +159,17 @@ class ProductDetail extends Component {
         return true
     }
 
-    canSubmit(){
+    async canSubmit(){
         let form = this.state.form
-        this.validCoupon(form)
-        return (this.validCant(form) && this.state.validCoupon)
+        
+        return (this.validCant(form) && this.validCoupon(form))
     }
 
     submit = () => {
-        console.log(this.canSubmit())
-
+        this.canSubmit().then(result =>{ 
+            console.log('Can Submit: ', result) 
+            // codigo con result 
+        })
        /*  if (!this.canSubmit()) return false
         var self = this;
         let form = this.state.form
