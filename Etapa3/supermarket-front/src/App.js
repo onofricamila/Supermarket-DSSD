@@ -22,10 +22,13 @@ class App extends Component {
   }
 
   componentWillMount(){
-      axios.get('http://localhost:3003/products/all')
+      axios.get('http://localhost:3003/products?filter=[{"field":"stock","operator":">","value":0}]')
           .then(response => {
               let auth = this.state.authenticated
-              this.setState({ products: response.data.data, authenticated: auth });
+              this.setState({ 
+                products: response.data.data, 
+                authenticated: auth 
+              });
           }).catch(function (error) {
               console.log(error);
           })  
