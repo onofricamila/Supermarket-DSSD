@@ -252,36 +252,6 @@ class ProductDetail extends Component {
                 }
             }
         })
-       /*  if (!this.canSubmit()) return false
-        var self = this;
-        let form = this.state.form
-        let loadedProduct = this.state.loadedProduct
-        
-       axios.post(`http://localhost:3003/buy`, 
-            { productid: loadedProduct.id,
-            quantity: form.cant
-            })
-          .then(function (response) {
-            console.log(response);
-            let msj = 'Oops! Algo salio mal'
-            if (response.status == 200) {
-                msj = 'Recibirás el producto en los próximos días :)'
-            }
-            self.setState({
-                loadedProduct: {...loadedProduct},
-                form: form,
-                msj: msj,
-            })
-          })
-          .catch(function (error) {
-            console.log(error);
-            self.setState({
-                loadedProduct: {...loadedProduct},
-                form: form,
-                msj: 'Algo salio mal :(',
-            })
-          })  */
-            
     }
 
     render() {
