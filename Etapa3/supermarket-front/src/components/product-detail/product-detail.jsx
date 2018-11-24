@@ -246,19 +246,42 @@ class ProductDetail extends Component {
                 let cant = self.state.form.cant
                 let extraDiscount = self.state.extraDiscount
                 let loadedProduct = self.state.loadedProduct
-                let txt = 'Estas a punto de comprar "' + cant + '" unidad/es del producto "' + loadedProduct.name + '" por un total de "$' + Math.round(extraDiscount * cant * loadedProduct.price * 100)/100 + '" '
+
+                if(loadedProduct.stock - cant < 0){
+                    let msj = '¡Disminuye la cantidad! Supera al stock en "' + (loadedProduct.stock - cant) * -1 + '" unidad/es.'
+                    self.setState({
+                        ...currentState,
+                        msj: msj
+                    })
+                    return false
+                }
+
+                let txt = 'Estas a punto de comprar "' + cant + '" unidad/es del producto "' + loadedProduct.name + '" por un total de "$' + this.roundedMultiplicationOf([extraDiscount, cant, loadedProduct.price]) + '" '
                 var selection = window.confirm(txt)
                 if (selection == true) {
                     self.purchase()
                 } else {
                     self.setState(
                         {...currentState,
-                        msj: 'Optaste por cancelar'
+                        msj: 'Optaste por cancelar... ¿estás seguro que no quieres el producto?'
                         }
                     )
                 }
             }
         })
+    }
+
+    showFinalPrice(){
+        var prod = this.state.loadedProduct
+        var cant = this.state.form.cant
+        if(this.hasOnlyDigits(cant)){
+            return  this.roundedMultiplicationOf([prod.price, cant])
+        }
+        return '---'
+    }
+
+    roundedMultiplicationOf(factors){
+        return Math.round(factors.reduce( (a,b) => a * b )*100)/100
     }
 
     render() {
@@ -279,7 +302,7 @@ class ProductDetail extends Component {
                             <div className="product-detail-data">
                                 <h3 className="card-title capitalize">{prod.name}</h3>
                                 <h6 className="card-subtitle mb-2 text-muted capitalize">{prod.type.description}</h6>
-                                <p className="card-text product-price-size">$ {Math.round(prod.price * this.state.form.cant * 100)/100}</p>
+                                <p className="card-text product-price-size">$ {this.showFinalPrice()}</p>
                             </div>
                         </div>
                         <div className="col-sm-12 col-md-8">

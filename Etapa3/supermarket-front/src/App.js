@@ -42,19 +42,18 @@ class App extends Component {
     this.setState({authenticated:false});
   }
 
-  onlyProductsWithStockHandler(id){
+  hideProductWithNotEnoughStockHandler(id){
     let currentProducts = this.state.products
-    console.log(currentProducts)
-    let result = currentProducts.filter(this.checkStock(id))
-    console.log(result)
+    let result = currentProducts.filter(this.checkProduct(id))
     let currentState = this.state
+
     this.setState({
       ...currentState,
       products: result
     })
   }
 
-  checkStock(id){
+  checkProduct(id){
     return function(prod) {
       return prod.id != id;
   }
@@ -69,7 +68,7 @@ class App extends Component {
             <Switch>
               <Route path="/" exact component={AddPropsToRoute(ProductList, { products: this.state.products})}  />
               <Route path="/login" exact component={AddPropsToRoute(Login, { onLogin: this.loginHandler})}/>
-              <Route path="/buy/:id" exact component={AddPropsToRoute(ProductDetail, { onBuy: this.onlyProductsWithStockHandler.bind(this) })} />
+              <Route path="/buy/:id" exact component={AddPropsToRoute(ProductDetail, { onBuy: this.hideProductWithNotEnoughStockHandler.bind(this) })} />
             </Switch>
             <Footer />
           </AuthContext.Provider>
