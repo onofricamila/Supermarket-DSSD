@@ -83,6 +83,14 @@ class ProductDetail extends Component {
             return false
         }
 
+        if(loadedProduct.stock - form.cant < 0){
+            this.setState({
+                ...currentState,
+                msj: '¡Disminuye la cantidad! Supera al stock en "' + (loadedProduct.stock - form.cant) * -1 + '" unidad/es.'
+            })
+            return false
+        }
+
         return true
     }
 
@@ -210,15 +218,6 @@ class ProductDetail extends Component {
                 let cant = self.state.form.cant
                 let extraDiscount = self.state.extraDiscount
                 let loadedProduct = self.state.loadedProduct
-
-                if(loadedProduct.stock - cant < 0){
-                    let msj = '¡Disminuye la cantidad! Supera al stock en "' + (loadedProduct.stock - cant) * -1 + '" unidad/es.'
-                    self.setState({
-                        ...currentState,
-                        msj: msj
-                    })
-                    return false
-                }
 
                 let txt = 'Estas a punto de comprar "' + cant + '" unidad/es del producto "' + loadedProduct.name + '" por un total de "$' + this.roundedMultiplicationOf([extraDiscount, cant, loadedProduct.price]) + '" '
                 var selection = window.confirm(txt)
