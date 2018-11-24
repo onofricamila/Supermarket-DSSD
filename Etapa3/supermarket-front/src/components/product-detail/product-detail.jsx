@@ -3,6 +3,7 @@ import './product-detail.css';
 import axios from 'axios'
 import {Button} from 'reactstrap'
 import {AuthContext} from '../../App';
+import {Redirect} from 'react-router-dom'
 
 class ProductDetail extends Component {
     state = {
@@ -12,7 +13,8 @@ class ProductDetail extends Component {
             couponNumber: ''
         },
         msj:'¡Terminá tu compra!',
-        extraDiscount: 1
+        extraDiscount: 1,
+        redirect: false,
     }
 
     constructor(props){
@@ -215,7 +217,12 @@ class ProductDetail extends Component {
                 loadedProduct: {...loadedProduct},
                 form: form,
                 msj: msj,
+                redirect: true
             })
+            if(loadedProduct.stock - form.cant == 0){
+                self.props.onBuy(loadedProduct.id)
+            }
+            
           })
           .catch(function (error) {
             console.log(error);
@@ -246,7 +253,7 @@ class ProductDetail extends Component {
                 } else {
                     self.setState(
                         {...currentState,
-                        msj: 'Optaste por cacelar'
+                        msj: 'Optaste por cancelar'
                         }
                     )
                 }
@@ -255,6 +262,8 @@ class ProductDetail extends Component {
     }
 
     render() {
+        if (this.state.redirect == true)  return (<Redirect to='/' />) 
+
         let show = ""
         if(this.state.loadedProduct){
             var prod = this.state.loadedProduct
