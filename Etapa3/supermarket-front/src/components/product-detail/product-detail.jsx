@@ -125,6 +125,7 @@ class ProductDetail extends Component {
         var action = await axios.get(`http://localhost:3003/coupon/${form.couponNumber}`)
         .then(function (response) {
             console.log(response)
+            // no existe ese numero de cupon
             if(response.data.status == "resource not found"){
                 self.setState({
                     ...currentState,
@@ -133,15 +134,28 @@ class ProductDetail extends Component {
                     msj: '¡Número de cupón inválido!',
                 }) 
                 return false
-            }else{
+            }
+
+            // el cupon existe pero ya fue usado
+            if(response.data.data.used == 1){
                 self.setState({
+                    ...currentState,
                     loadedProduct: {...loadedProduct},
                     form: form,
-                    msj: 'Cupon valido',
-                    extraDiscount: 1-parseInt(response.data.data.discount_percentage)/100
+                    msj: '¡Ese cupón ya fue utilizado!',
                 }) 
-                return true
+                return false
             }
+
+            // existe el cupon y se puede usar
+            self.setState({
+                loadedProduct: {...loadedProduct},
+                form: form,
+                msj: 'Cupon valido',
+                extraDiscount: 1-parseInt(response.data.data.discount_percentage)/100
+            }) 
+            return true
+            
         })
         .catch(function (error) {
             console.log(error);
@@ -177,7 +191,7 @@ class ProductDetail extends Component {
         if(!this.isEmpty(currentState.form.couponNumber)){
             params = { 
                 ...params,
-                coupnum: form.couponNumber
+                coupon: form.couponNumber
             }
         }
      
