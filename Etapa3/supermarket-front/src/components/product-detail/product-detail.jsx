@@ -51,34 +51,6 @@ class ProductDetail extends Component {
         })
     }
 
-    validFields(form){
-        let loadedProduct = this.state.loadedProduct
-        let currentState = this.state 
-
-        if(this.isEmpty(form.cant)){
-            this.setState({
-                ...currentState,
-                loadedProduct: {...loadedProduct},
-                form: form,
-                msj: '¡Debes ingresar la cantidad!',
-            })
-            return false
-        }
-
-        var re = /^[0-9]*$/;
-        if (re.test(form.cant) && re.test(form.couponNumber)){
-            return true
-        }
-
-        this.setState({
-            ...currentState,
-            loadedProduct: {...loadedProduct},
-            form: form,
-            msj: '¡Debes ingresar solo números!',
-        })
-        return false
-    }
-
     isEmpty(field){
         return field.length == 0
     }
@@ -152,7 +124,6 @@ class ProductDetail extends Component {
                     form: form,
                     msj: '¡Número de cupón inválido!',
                 }) 
-                // quiero que la funcion retorne false
                 return false
             }else{
                 self.setState({
@@ -161,7 +132,6 @@ class ProductDetail extends Component {
                     msj: 'Cupon valido',
                     extraDiscount: 1-parseInt(response.data.data.discount_percentage)/100
                 }) 
-                // quiero que la funcion retorne true
                 return true
             }
         })
@@ -173,7 +143,6 @@ class ProductDetail extends Component {
                 form: form,
                 msj: 'Oops, hubo un problema :(',
             })      
-            // aca podria retornar false
             return false
         }) 
         
@@ -183,7 +152,6 @@ class ProductDetail extends Component {
 
     async canSubmit(){
         let form = this.state.form
-        
         return (this.validCant(form) && this.validCoupon(form))
     }
 
@@ -208,15 +176,11 @@ class ProductDetail extends Component {
         axios.post(`http://localhost:3003/buy`, params)
           .then(function (response) {
             console.log(response);
-            let msj = 'Oops! Algo salio mal'
-            if (response.status == 200) {
-                msj = 'Recibirás el producto en los próximos días :)'
-            }
             self.setState({
                 ...currentState,
                 loadedProduct: {...loadedProduct},
                 form: form,
-                msj: msj,
+                msj: 'Recibirás el producto en los próximos días :)',
                 redirect: true
             })
             if(loadedProduct.stock - form.cant == 0){
