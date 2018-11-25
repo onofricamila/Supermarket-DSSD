@@ -1,7 +1,5 @@
 import React, {Component} from 'react';
 import './login.css';
-import {AuthContext} from '../../App'
-import {Redirect} from 'react-router-dom'
 import { Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
 import axios from 'axios'
 
@@ -15,7 +13,6 @@ class Login extends Component {
             password:'',
         },
         msj:'¡Ingresa tus credenciales!',
-        redirect: false,
       }
     }
 
@@ -29,7 +26,6 @@ class Login extends Component {
             this.setState({
                 credentials: credentials,
                 msj: '¡Debes completar los campos!',
-                redirect: false
             })
             return false
         } 
@@ -44,7 +40,6 @@ class Login extends Component {
         this.setState({
             credentials: credentials,
             msj: '¡Debes ingresar un mail valido!',
-            redirect: false
         })
         return false
     }
@@ -52,24 +47,31 @@ class Login extends Component {
     submit = () => {
         if (!this.canSubmit()) return false
         
+        let currentState = this.state
         var self = this;
         let credentials = this.state.credentials
-        axios.get(`http://localhost:3001/api/employees?filter=[{"field":"email","value":"${credentials.email}"},{"field":"password","value":"${credentials.password}"}]`)
+        let params = {
+            email: credentials.email,
+            pass: credentials.password
+        }
+        axios.post('http://localhost:3003/login', params)
           .then(function (response) {
             console.log(response);
-            if (response.data =! null) {
+            if (response.data.success) {
+                self.props.onLogin(response.data.token)
+                self.props.history.push('/')
+            }else{
                 self.setState({
-                    redirect: true
+                    ...currentState,
+                    msj: '¡Malas credenciales!'
                 })
-                self.props.onLogin()
             }
           })
           .catch(function (error) {
             console.log(error);
             self.setState({
                 credentials: credentials,
-                msj: '¡Malas credenciales!',
-                redirect: false
+                msj: 'Algo salio mal :(',
             })
           })  
             
@@ -88,11 +90,8 @@ class Login extends Component {
     }
 
     render() {
-        if (this.state.redirect == true)  return (<Redirect to='/' />) 
-      
         return (
-            <AuthContext.Consumer>
-                {auth => auth ? "¡Ya estas logueado!" :  <div className="login-page">
+               <div className="login-page">
                     <div className="form">
                         <p>{this.state.msj}</p>
                         <Form className="login-form">
@@ -102,8 +101,6 @@ class Login extends Component {
                         </Form>
                     </div>
                 </div>
-                }
-            </AuthContext.Consumer>
         );
     }
 }

@@ -24,6 +24,7 @@ class ProductDetail extends Component {
     componentWillMount(){
         var id = this.props.match.params.id
         if (id) {
+            console.log('token en prod detail'+this.props.auth)
             axios.get('http://localhost:3003/products/' + id)
                 .then(response => {
                     let currentState = this.state 

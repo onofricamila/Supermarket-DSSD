@@ -1,6 +1,8 @@
-import React from 'react';
+import React, {Fragment} from 'react';
 import Product from '../product/product';
 import './products-list.css';
+import {Redirect} from 'react-router-dom'
+import {AuthContext} from '../../App';
 
 function renderProduct(aProduct, index) {
     return (
@@ -12,19 +14,31 @@ function renderProduct(aProduct, index) {
 
 function renderProductsList(products) {
     return (
-        <div className="products-list" key="productList">
-            <div className="container">
-                <div className="product-list-title-container">
-                    <h2 className="product-list-title">¡Nuestros mejores productos te están esperando!</h2>
-                    <hr />
-                </div>
-                <div className="row products-list-row">
-                    {products.map((element, index) => {
-                        return renderProduct(element, index);
-                    })}
+        <Fragment>
+            <AuthContext.Consumer>
+                { auth => {
+                    if(!auth){
+                        return <Redirect to='/login' />
+                    }
+                } }
+            </AuthContext.Consumer> 
+            
+            <div className="products-list" key="productList">
+                <div className="container">
+                    <div className="product-list-title-container">
+                        <h2 className="product-list-title">¡Nuestros mejores productos te están esperando!</h2>
+                        <hr />
+                    </div>
+                    <div className="row products-list-row">
+                        {products.map((element, index) => {
+                            return renderProduct(element, index);
+                        })}
+                    </div>
                 </div>
             </div>
-        </div>
+        </Fragment>
+
+       
     )
 }
 
