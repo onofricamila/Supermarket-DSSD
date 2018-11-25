@@ -320,12 +320,33 @@ function getAllProductTypes(req, res, next) {
   })
 }
 
+function reduceStock(req, res, next) {
+  let id = parseInt(req.params.id)
+  let quantity = parseInt(req.params.quantity)
+
+  if (!id || !quantity) return res.status(500).json({ status:'error', message:'Bad request' })
+
+  getSingle(next, 'products', id, (prod) => {
+    if (!prod) return res.status(404).json({ status: 'error', message:'Product not found' })
+    
+    let stock = prod.stock - quantity
+    if (stock < 0) return res.status(500).json({ status:'error', message:'Not enough stock' })
+    
+    const sql = 'UPDATE products SET stock=$1 where id=$2';
+    const value = [stock, id];
+    writeData(sql, value, (data) => {
+      createResponse(data, res, 'updated');
+    })
+  });
+}
+
 module.exports = {
   getAllProducts: getAllProducts,
   getSingleProduct: getSingleProduct,
   getSingleProductMarginInfo: getSingleProductMarginInfo,
   getSingleProductIsElectroValue: getSingleProductIsElectroValue,
   updateProduct: updateProduct,
+  reduceStock: reduceStock,
 
   getAllProductTypes: getAllProductTypes,
   getSingleProductType: getSingleProductType,
