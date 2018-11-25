@@ -224,12 +224,13 @@ class ProductDetail extends Component {
             console.log(response);
             self.setState({
                 ...currentState,
-                loadedProduct: {...loadedProduct},
+                loadedProduct: {...loadedProduct, stock: loadedProduct.stock-form.cant},
                 form: form,
                 msj: 'Recibirás el producto en los próximos días :)',
             })
             if(loadedProduct.stock - form.cant == 0){
                 self.props.onBuy(loadedProduct.id)
+                self.props.history.push('/')
             }
             
           })
