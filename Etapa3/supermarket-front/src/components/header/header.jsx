@@ -3,7 +3,7 @@ import './header.css';
 import {AuthContext} from '../../App';
 import {NavLink} from 'react-router-dom'
 import { Button } from 'reactstrap';
-import { FaUser } from 'react-icons/fa';
+import { FaUsers } from 'react-icons/fa';
 
 class Header extends Component {
     constructor(props){
@@ -25,7 +25,7 @@ class Header extends Component {
                 <div className="header-login">
                 <AuthContext.Consumer>
                     {auth => auth ?  <Button outline color="secondary" onClick={this.props.onLogout}>Logout</Button> :  <NavLink to={login.path} className="header-login-link">
-                    <FaUser /> Iniciar sesión </NavLink>
+                    <FaUsers size='1.5em'/> Iniciar sesión </NavLink>
                     }
                 </AuthContext.Consumer>
                     

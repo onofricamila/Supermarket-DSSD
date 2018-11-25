@@ -1,5 +1,6 @@
 import React from 'react';
 import './footer.css';
+import { FaGithub } from 'react-icons/fa';
 
 const footer = props => (
   <div className="footer">
@@ -10,8 +11,7 @@ const footer = props => (
     </div>
     <div className="footer-github">
       <a href="https://github.com/onofricamila/Supermarket-DSSD" className="footer-github-link">
-        <img src="img/github.png" alt="Github icon" className="footer-github-img" /> 
-        Ver código fuente en GitHub
+        <FaGithub size='2em'/>  Ver código fuente en GitHub
       </a>
     </div>
   </div>
