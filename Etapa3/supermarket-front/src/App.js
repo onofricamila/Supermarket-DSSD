@@ -21,9 +21,8 @@ class App extends Component {
     }
   }
 
-  componentWillUpdate(){
-    if(this.state.products.length == 0){
-      axios.get(`http://localhost:3003/products?filter=[{"field":"stock","operator":">","value":0}]&token=${this.state.authenticated}`)
+  fillAppWithProducts(){
+    axios.get(`http://localhost:3003/products?filter=[{"field":"stock","operator":">","value":0}]`, {headers: {'token': this.state.authenticated}})
       .then(response => {
           let auth = this.state.authenticated
           this.setState({ 
@@ -33,8 +32,16 @@ class App extends Component {
       }).catch(function (error) {
           console.log(error);
       })  
+  }
+
+  // componentWillMount(){
+  //     this.fillAppWithProducts()
+  // }
+
+  componentWillUpdate(){
+    if(this.state.products.length == 0){
+      this.fillAppWithProducts()
     }
-     
   }
 
   loginHandler = (token) => {
