@@ -56,7 +56,6 @@ class Login extends Component {
         }
         axios.post('http://localhost:3003/login', params)
           .then(function (response) {
-            console.log(response);
             if (response.data.success) {
                 self.props.onLogin(response.data.token)
                 self.props.history.push('/')

@@ -49,7 +49,7 @@ class App extends Component {
   }
 
   logoutHandler = () => {
-    this.setState({authenticated: ''});
+    this.setState({authenticated: '', products: []});
   }
 
   hideProductWithNotEnoughStockHandler(id){
