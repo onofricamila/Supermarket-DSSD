@@ -286,7 +286,7 @@ class ProductDetail extends Component {
     }
 
     render() {
-        if (this.state.redirect == true)  return (<Redirect to='/' />) 
+        if (this.state.redirect == true || !this.props.auth)  return (<Redirect to='/' />) 
 
         let show = ""
         if(this.state.loadedProduct){
