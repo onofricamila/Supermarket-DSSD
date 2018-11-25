@@ -77,7 +77,7 @@ class App extends Component {
             <Header onLogout={this.logoutHandler} />
             <Switch>
               <Route path="/" exact component={AddPropsToRoute(ProductList, { products: this.state.products})}  />
-              <Route path="/login" exact component={AddPropsToRoute(Login, { onLogin: this.loginHandler})}/>
+              <Route path="/login" exact component={AddPropsToRoute(Login, { auth: this.state.authenticated, onLogin: this.loginHandler})}/>
               <Route path="/buy/:id" exact component={AddPropsToRoute(ProductDetail, { onBuy: this.hideProductWithNotEnoughStockHandler.bind(this), auth: this.state.authenticated })} />
             </Switch>
             <Footer />

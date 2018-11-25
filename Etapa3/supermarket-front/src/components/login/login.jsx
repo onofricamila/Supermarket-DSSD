@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import './login.css';
 import { Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
 import axios from 'axios'
+import {Redirect} from 'react-router-dom'
 
 class Login extends Component {
 
@@ -89,6 +90,9 @@ class Login extends Component {
     }
 
     render() {
+        if (this.props.auth){
+           return <Redirect to='/'/>
+        }
         return (
                <div className="login-page">
                     <div className="form">
