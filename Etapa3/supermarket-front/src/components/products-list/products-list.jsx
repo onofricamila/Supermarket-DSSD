@@ -14,15 +14,6 @@ function renderProduct(aProduct, index) {
 
 function renderProductsList(products) {
     return (
-        <Fragment>
-            <AuthContext.Consumer>
-                { auth => {
-                    if(!auth){
-                        return <Redirect to='/login' />
-                    }
-                } }
-            </AuthContext.Consumer> 
-            
             <div className="products-list" key="productList">
                 <div className="container">
                     <div className="product-list-title-container">
@@ -36,9 +27,6 @@ function renderProductsList(products) {
                     </div>
                 </div>
             </div>
-        </Fragment>
-
-       
     )
 }
 
@@ -66,6 +54,9 @@ function renderErrorMessage() {
 }
 
 function render(props) {
+    if(!props.auth){
+        return <Redirect to='/login' />
+    }
     if (props.products !== undefined && props.products.length > 0) {
         return renderProductsContainer(props.products, props.nextButtonActived);
     } else {

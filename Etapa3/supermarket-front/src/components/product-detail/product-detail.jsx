@@ -14,7 +14,7 @@ class ProductDetail extends Component {
         },
         msj:'¡Terminá tu compra!',
         extraDiscount: 1,
-        redirect: false,
+        isEmployee: false
     }
 
     constructor(props){
@@ -23,12 +23,14 @@ class ProductDetail extends Component {
 
     componentWillMount(){
         var id = this.props.match.params.id
+        var self = this
         if (id) {
             axios.get('http://localhost:3003/products/' + id, {headers: {'token': this.props.auth}})
                 .then(response => {
-                    let currentState = this.state 
-                    let currentForm = this.state.form 
-                    this.setState({ 
+                    console.log(response)
+                    let currentState = self.state 
+                    let currentForm = self.state.form 
+                    self.setState({ 
                         ...currentState,
                         form: {...currentForm},
                         loadedProduct: response.data.data,
@@ -36,6 +38,28 @@ class ProductDetail extends Component {
                 }).catch(function (error) {
                     console.log(error);
                 })  
+
+          
+            axios.get('http://localhost:3003/isEmployee/', {headers: {'token': this.props.auth}})
+            .then(response => {
+                console.log(response)
+                let currentState = self.state 
+                let currentForm = self.state.form 
+                self.setState({ 
+                    ...currentState,
+                    form: {...currentForm},
+                    isEmployee: true
+                });
+            }).catch(function (error) {
+                console.log(error);
+                let currentState = self.state 
+                let currentForm = self.state.form 
+                self.setState({ 
+                    ...currentState,
+                    form: {...currentForm},
+                    isEmployee: false
+                })  
+            })  
         }
     }
 
@@ -195,18 +219,18 @@ class ProductDetail extends Component {
             }
         }
      
-        axios.post(`http://localhost:3003/buy`, params)
+        axios.post(`http://localhost:3003/buy`, params, {headers: {'token': this.props.auth}})
           .then(function (response) {
             console.log(response);
             self.setState({
                 ...currentState,
-                loadedProduct: {...loadedProduct},
+                loadedProduct: {...loadedProduct, stock: loadedProduct.stock-form.cant},
                 form: form,
                 msj: 'Recibirás el producto en los próximos días :)',
-                redirect: true
             })
             if(loadedProduct.stock - form.cant == 0){
                 self.props.onBuy(loadedProduct.id)
+                self.props.history.push('/')
             }
             
           })
@@ -262,7 +286,7 @@ class ProductDetail extends Component {
     }
 
     render() {
-        if (this.state.redirect == true)  return (<Redirect to='/' />) 
+        if (this.state.redirect == true || !this.props.auth)  return (<Redirect to='/' />) 
 
         let show = ""
         if(this.state.loadedProduct){
@@ -291,12 +315,10 @@ class ProductDetail extends Component {
                                             <input onChange={this.handleChange('cant')} className="form-control" id="cantidadProductos" placeholder="Ingrese la cantidad de productos" value={this.state.form.cant}/>
                                         </div>
 
-                                        <AuthContext.Consumer>
-                                            {auth => auth ? '' : <div className="form-group">
+                                            {this.state.isEmployee ? '' : <div className="form-group">
                                                 <label>Número de cupón (opcional): </label>
                                                 <input onChange={this.handleChange('couponNumber')}  className="form-control" id="cupon" placeholder="Ingrese el número de su cupón" value={this.state.form.couponNumber} />
                                             </div> }
-                                        </AuthContext.Consumer>
                                     </div>
                                     <div className="col-sm-12 col-md-6">
                                         <Button className='buyButton' onClick={this.submit}>Comprar</Button>
