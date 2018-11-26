@@ -304,7 +304,7 @@ function isEmployee(req, res, next) {
       response.data.isEmployee = true
       response.message = email + ' is an employee email'
     } else {
-      code = 404
+      code = 200
       response.status = 'resource not found'
       response.data.isEmployee = false
       response.message = email + ' is not an employee email'
