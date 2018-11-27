@@ -2,8 +2,17 @@
     margin-top: 30px;
 }
 
+.product-detail-container{
+    padding: 10% 0 0;
+    margin-top: -30px;
+}
+
 .buyButton {
-    margin-top: 70px;
+    margin-top: 20px;
+    width: 100%;
+    height: calc(2.25rem + 2px);
+    padding: .2rem 1rem;
+    font-size: 1.rem;
 }
 
 .card-footer {
@@ -16,5 +25,6 @@
     }
     .buyButton {
         margin-top: 0;
+        width: 100%;
     }
 }

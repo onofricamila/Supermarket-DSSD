@@ -1,7 +1,6 @@
 .products-list-container{
     background: #fff;
-    min-height: -webkit-fill-available;
-    margin-bottom: 50px;
+    margin-bottom: 100px;
 }
 
 .nextButton{
