@@ -12,7 +12,7 @@
     width: 100%;
     height: calc(2.25rem + 2px);
     padding: .2rem 1rem;
-    font-size: 1.rem;
+    font-size: 1rem!important;
 }
 
 .card-footer {
