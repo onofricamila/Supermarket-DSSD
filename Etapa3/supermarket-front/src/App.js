@@ -78,7 +78,7 @@ class App extends Component {
             <Switch>
               <Route path="/" exact component={AddPropsToRoute(ProductList, { products: this.state.products, auth: this.state.authenticated})}  />
               <Route path="/login" exact component={AddPropsToRoute(Login, { auth: this.state.authenticated, onLogin: this.loginHandler})}/>
-              <Route path="/buy/:id" exact component={AddPropsToRoute(ProductDetail, { onBuy: this.hideProductWithNotEnoughStockHandler.bind(this), auth: this.state.authenticated })} />
+              <Route path="/buy/:id" exact component={AddPropsToRoute(ProductDetail, { products: this.state.products, onBuy: this.hideProductWithNotEnoughStockHandler.bind(this), auth: this.state.authenticated })} />
             </Switch>
             <Footer />
           </AuthContext.Provider>

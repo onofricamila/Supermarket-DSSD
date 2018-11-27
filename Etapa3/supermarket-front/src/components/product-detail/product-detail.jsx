@@ -25,7 +25,7 @@ class ProductDetail extends Component {
         var id = this.props.match.params.id
         var self = this
         if (id) {
-            axios.get('http://localhost:3003/products/' + id, { headers: { 'token': this.props.auth } })
+            /* axios.get('http://localhost:3003/products/' + id, { headers: { 'token': this.props.auth } })
                 .then(response => {
                     console.log(response)
                     let currentState = self.state
@@ -38,7 +38,15 @@ class ProductDetail extends Component {
                 }).catch(function (error) {
                     console.log(error);
                 })
+            */
 
+           let currentState = self.state
+           let currentForm = self.state.form
+           self.setState({
+               ...currentState,
+               form: { ...currentForm },
+               loadedProduct: this.findProd(id),
+           });
 
             axios.get('http://localhost:3003/isEmployee/', { headers: { 'token': this.props.auth } })
                 .then(response => {
@@ -61,6 +69,13 @@ class ProductDetail extends Component {
                     })
                 })
         }
+    }
+
+    findProd(id){
+        return this.props.products.find(function(element) {
+            return element.id == id;
+        });
+          
     }
 
     handleChange = name => event => {
