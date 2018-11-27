@@ -319,11 +319,11 @@ class ProductDetail extends Component {
                                             <label>Número de cupón (opcional): </label>
                                             <input onChange={this.handleChange('couponNumber')} className="form-control" id="cupon" placeholder="Ingrese el número de su cupón" value={this.state.form.couponNumber} />
                                         </div>}
+                                        <Button className='buyButton btn-lg' onClick={this.submit}>Comprar</Button>
                                     </div>
+                                   
                                 </div>
-                                <div className="col-sm-12">
-                                    <Button className='buyButton btn-lg' onClick={this.submit}>Comprar</Button>
-                                </div>
+                               
                             </form>
                             <div className="card-footer text-muted">
                                 {this.state.msj}
