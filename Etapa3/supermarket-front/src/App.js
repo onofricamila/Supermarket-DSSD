@@ -22,11 +22,12 @@ class App extends Component {
   }
 
   fillAppWithProducts(){
+    var self = this
     axios.get(`http://localhost:3003/products?filter=[{"field":"stock","operator":">","value":0}]`, {headers: {'token': this.state.authenticated}})
       .then(response => {
           let auth = this.state.authenticated
-          this.setState({ 
-            products: response.data.data, 
+          self.setState({ 
+            products: this.onlyProductsWithStock(response.data.res), 
             authenticated: auth 
           });
       }).catch(function (error) {
@@ -35,7 +36,7 @@ class App extends Component {
   }
 
   // componentWillMount(){
-  //     this.fillAppWithProducts()
+  //     
   // }
 
   componentWillUpdate(){
@@ -43,13 +44,23 @@ class App extends Component {
       this.fillAppWithProducts()
     }
   }
-
+  
   loginHandler = (token) => {
     this.setState({authenticated: token});
   }
 
   logoutHandler = () => {
     this.setState({authenticated: '', products: []});
+  }
+
+  onlyProductsWithStock(prods){
+    return prods.filter(this.checkStock())
+  }
+
+  checkStock(){
+    return function(prod) {
+      return prod.stock > 0;
+  }
   }
 
   hideProductWithNotEnoughStockHandler(id){
