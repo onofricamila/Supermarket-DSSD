@@ -12,9 +12,9 @@ class ProductDetail extends Component {
             cant: 1,
             couponNumber: ''
         },
-        msj: '¡Terminá tu compra!',
+        msj: '',
         extraDiscount: 1,
-        isEmployee: false
+        isEmployee: false,
     }
 
     constructor(props) {
@@ -221,10 +221,12 @@ class ProductDetail extends Component {
         let form = this.state.form
         let loadedProduct = this.state.loadedProduct
         let currentState = this.state
+        let caseid = this.props.caseid
 
         let params = {
             productid: loadedProduct.id,
-            quantity: form.cant
+            quantity: form.cant,
+            caseid: caseid
         }
 
         if (!this.isEmpty(currentState.form.couponNumber)) {
@@ -241,13 +243,22 @@ class ProductDetail extends Component {
                     ...currentState,
                     loadedProduct: { ...loadedProduct, stock: loadedProduct.stock - form.cant },
                     form: form,
-                    msj: 'Recibirás el producto en los próximos días :)',
+                    msj: '¡Registramos tu compra!',
                 })
-                if (loadedProduct.stock - form.cant == 0) {
-                    self.props.onBuy(loadedProduct.id)
-                    self.props.history.push('/')
-                }
-
+                setTimeout(function(){ 
+                    if(loadedProduct.stock - form.cant == 0){
+                        self.props.onBuy(loadedProduct.id)
+                        self.props.history.push('/') 
+                    }
+                    else{
+                        self.props.onBuy2(loadedProduct.id, form.cant)
+                    }
+                  
+                
+                }, 2500);
+                
+                // self.props.onBuy2(loadedProduct.id, form.cant)
+                // self.props.history.push('/')
             })
             .catch(function (error) {
                 console.log(error);

@@ -17,7 +17,8 @@ class App extends Component {
     super(props);
     this.state = {
       products: [],
-      authenticated: ''
+      authenticated: '',
+      caseid: '',
     }
   }
 
@@ -25,10 +26,12 @@ class App extends Component {
     var self = this
     axios.get(`http://localhost:3003/products?filter=[{"field":"stock","operator":">","value":0}]`, {headers: {'token': this.state.authenticated}})
       .then(response => {
+        console.log(response)
           let auth = this.state.authenticated
           self.setState({ 
             products: this.onlyProductsWithStock(response.data.res), 
-            authenticated: auth 
+            authenticated: auth,
+            caseid: response.data.caseid
           });
       }).catch(function (error) {
           console.log(error);
@@ -63,6 +66,26 @@ class App extends Component {
   }
   }
 
+  decrementStockFor(id, quantity) {
+    return function(prod) {
+      if (prod.id == id){
+        prod.stock = prod.stock - quantity
+      } 
+      return prod
+  }
+  }
+
+  manageStockOnBuyHandler(id, quantity) {
+    let currentProducts = this.state.products
+    let result = currentProducts.map(this.decrementStockFor(id, quantity))
+    let currentState = this.state
+
+    this.setState({
+      ...currentState,
+      products: result,
+    })
+  }
+
   hideProductWithNotEnoughStockHandler(id){
     let currentProducts = this.state.products
     let result = currentProducts.filter(this.checkProduct(id))
@@ -89,7 +112,7 @@ class App extends Component {
             <Switch>
               <Route path="/" exact component={AddPropsToRoute(ProductList, { products: this.state.products, auth: this.state.authenticated})}  />
               <Route path="/login" exact component={AddPropsToRoute(Login, { auth: this.state.authenticated, onLogin: this.loginHandler})}/>
-              <Route path="/buy/:id" exact component={AddPropsToRoute(ProductDetail, { products: this.state.products, onBuy: this.hideProductWithNotEnoughStockHandler.bind(this), auth: this.state.authenticated })} />
+              <Route path="/buy/:id" exact component={AddPropsToRoute(ProductDetail, { caseid: this.state.caseid, products: this.state.products, onBuy: this.hideProductWithNotEnoughStockHandler.bind(this), onBuy2: this.manageStockOnBuyHandler.bind(this), auth: this.state.authenticated })} />
             </Switch>
             <Footer />
           </AuthContext.Provider>
